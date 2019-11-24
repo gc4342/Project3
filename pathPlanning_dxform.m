@@ -1,32 +1,24 @@
-clear all;
-close all;
-clc;
-
-mymap = load ('mymap_variable')
-%mymap= openfig('mapLayout.fig','visible')
-%how do we just load a map and have drawMaze draw it
-%load mymap
-%%mymap = makemap(10)
-% start=[15,10]
-% goal=[30,10]
+% mymap=makemap(10);
 goal=[8,9]
 start=[5,5]
-
-ds=Dstar(mymap);
-ds.plan(goal);
-ds.plot();
-ds.query(start, 'animate');
-path_points = ds.query(start, 'animate')
-[m,n]=size(path_points);
+dxform=DXform(mymap);
+dxform.plan(goal);
+dxform.plot();
+dxform.query(start,goal)
+dxform.plot();
+b = dxform.query(start, 'animate')
+new_b = dxform.query(start,goal)
+new= dxform.path(start)
+[m,n]=size(b);
 for i=1:1:m-1
     if i==1
-
         s1(1:10,1) = tpoly(b(1,1),b(1+1,1),10);
         s2(1:10,1) = tpoly(b(1,2),b(1+1,2),10);
        
     else
      s1(((i-1)*10)+1:((i-1)*10)+10,1) = tpoly(b(i,1),b(i+1,1),10);
      s2(((i-1)*10)+1:((i-1)*10)+10,1) = tpoly(b(i,2),b(i+1,2),10);
+     
     end
 end
 
@@ -49,13 +41,11 @@ for i=1:1:m-1  %1 to 6
 end
 
 
-hold on;
-figure(1);
-plot(path_points(:,1),path_points(:,2),'-bs');
-hold on;
-plot(s1,s2,'pm');
-
-hold on;
-plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
-
-
+% hold on;
+% figure(1);
+% plot(b(:,1),b(:,2),'-bs');
+% hold on;
+% plot(s1,s2,'pm');
+% 
+% hold on;
+% plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
