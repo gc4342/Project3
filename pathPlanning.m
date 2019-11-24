@@ -2,8 +2,6 @@ clear all;
 close all;
 clc;
 
-%mymap= openfig('mapLayout.fig','visible')
-%how do we just load a map and have drawMaze draw it
 %load mymap
 mymap = makemap(10)
 start=[5,5]
