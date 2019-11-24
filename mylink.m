@@ -6,7 +6,7 @@ function varargout = mylink(varargin)
 %      the existing singleton*.
 %      MYLINK('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in MYLINK.M with the given input arguments.
-% Last Modified by GUIDE v2.5 14-Nov-2019 09:23:53
+% Last Modified by GUIDE v2.5 24-Nov-2019 13:24:04
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -41,7 +41,6 @@ handles.theta3 = 0;  % joint 3
 handles.theta4 = 0;
 
 handles.filename = '';
-
 % Update handles structure
 guidata(hObject, handles);
 
@@ -64,7 +63,6 @@ handles.theta1 = get (hObject,'Value');
 disp(handles.theta1);
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 T = handles.robot.fkine([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
-display(T);
 
 set(handles.edit4,'String', T.t(1));
 set(handles.edit5,'String', T.t(2));
@@ -95,7 +93,7 @@ disp(handles.theta2);
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
 
 T= handles.robot.fkine([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
-display(T);
+%display(T);
 
 set(handles.edit4,'String', T.t(1));
 set(handles.edit5,'String', T.t(2));
@@ -125,7 +123,7 @@ handles.theta3 = get (hObject,'Value')/180*pi;
 disp(handles.theta3);
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
 T = handles.robot.fkine([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
-display(T);
+%display(T);
 set(handles.edit4,'String', T.t(1));
 set(handles.edit5,'String', T.t(2));
 set(handles.edit6,'String', T.t(3));
@@ -148,24 +146,17 @@ end
 function Robot_Callback(hObject, eventdata, handles)
 % hObject    handle to Robot (see GCBO)
 % handles    structure with handles and user data (see GUIDATA)
-L(1) = Revolute ('d', 2.5, 'a', 8.2, 'alpha', 0, 'offset', 0*pi/180 , 'qlim', [-180*pi/180 15*pi/180]) %DH parameters for Link1
-L(2) = Revolute ('d', 0.7, 'a', 9, 'alpha', pi/2 ,'offset', (35)*pi/180, 'qlim', [0*pi/180 200*pi/180]) %DH parameters for Link2
-L(3) = Revolute ('d', 2.6, 'a', 0, 'alpha', pi/2, 'offset', 0) %DH parameters for Link3
-L(4) = Revolute ('d', 8.5, 'a', 0, 'alpha', 0, 'offset', 0*pi/180)
+L(1) = Revolute ('d', 2.5, 'a', 8.2, 'alpha', 0, 'offset', 0*pi/180 , 'qlim', [-180*pi/180 15*pi/180]); %DH parameters for Link1
+L(2) = Revolute ('d', 0.7, 'a', 9, 'alpha', pi/2 ,'offset', (35)*pi/180, 'qlim', [0*pi/180 200*pi/180]); %DH parameters for Link2
+L(3) = Revolute ('d', 2.6, 'a', 0, 'alpha', pi/2, 'offset', 0); %DH parameters for Link3
+L(4) = Revolute ('d', 8.5, 'a', 0, 'alpha', 0, 'offset', 0*pi/180);
 
 handles.robot = SerialLink(L, 'name', 'robot');
-
-display("*****");
-%disp(handles.robot.qlim[0,0];
+warning('off','all');
 
 handles.robot.base = [1 0 0 0; 0 1 0 10.2; 0 0 1 5.3; 0 0 0 1]; % base of robot
-%handles.robot.tool = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1]; % end effector of robot
-display (handles.robot);
 
 T= handles.robot.fkine([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
-%T= handles.robot.fkine([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
-display(T);
-%handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4], 'deg');
 
 theta1_deg= handles.theta1*180/pi;
@@ -182,7 +173,6 @@ set(handles.edit6, 'String', T.t(3));
 
 % Update handles structure
 guidata(hObject, handles);
-
 
 function edit1_Callback(hObject, eventdata, handles)
 % hObject    handle to edit1 (see GCBO)
@@ -409,7 +399,6 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 optimizedDHParams = fminsearch (@(B) Objective_Fun(B), [0,8.5,0,0;2.5,9.5,1.57,0.39;0,0,0,0])
 
-
 % --- Executes on button press in checkbox1.
 function checkbox1_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox1 (see GCBO)
@@ -417,12 +406,11 @@ function checkbox1_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of checkbox1
 
 %import the drawRobot class here
-%import pkg.*
 T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 
-handles.rob = drawRobot();      % initiate the object of class drawRobot
-valbutton=get(hObject,'Value')  % fetch the value of the checkbox
+handles.path = pathFinderRobot();      % initiate the object of class drawRobot
+valbutton = get(hObject,'Value')  % fetch the value of the checkbox
 
 %if the button is pressed, open the files,to void rewriting of the file, when
 %checkbox is unchecked after keypress functionality is over
@@ -430,12 +418,12 @@ if valbutton == 1
     fid = fopen('shapesinfo.txt','w');
     fid2 = fopen('position.txt','w');
 end
-
+shift = 1;
 while(valbutton)
-
     f = gcf;    %gets current figure
     val = 0;      %initialize val for switch case
     disp('Press button')
+    
     w = waitforbuttonpress
     if(w==1)
         val = double(get(f,'CurrentCharacter'))
@@ -446,43 +434,57 @@ while(valbutton)
         switch (val)
             case 97 %diagonal
                 disp('Moving diagonal');
-                T.t(1) = T.t(1) - 0.2828;
-                T.t(2) = T.t(2) - 0.2828;
+                T.t(1) = T.t(1) - 0.2828
+                T.t(2) = T.t(2) - 0.2828
                 %T.t(1);
                 val = 0;
            case 28 %Right
                 disp('decrease in x');
-                T.t(1) = T.t(1) - 0.1;
-                T.t(1)
+                T.t(1) = T.t(1) - 0.1
+                %T.t(1)
                 val=0;
             case 29 %Left
                 disp('increase in x');
-                T.t(1) = T.t(1) + 0.1;
-                T.t(1)
+                T.t(1) = T.t(1) + 0.1
+%                 T.t(1)
                 val=0;
             case 30 %up
                 disp('increase in y');
-                T.t(2) = T.t(2) + 0.1;
-                T.t(2)
+                T.t(2) = T.t(2) + 0.1
+%                 T.t(2)
                 val=0;
             case 31 %down
                 disp('decrease in y');
-                T.t(2) = T.t(2) - 0.1;
-                T.t(2)
+                T.t(2) = T.t(2) - 0.1
+%                 T.t(2)
                 val=0;
             case 98
                 disp('moving to next location');
                 handles.theta3 = (45/180)*pi;
-                handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+                handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
                 pause(1);
-                if(val == 98)
-                    handles.theta1 = (-24.28/180)*pi;
-                    handles.theta2 = 0;
+                if(shift == 1)
+                    disp('shift 1');
+                    handles.theta1 = ((-0.40)/pi);
+                    handles.theta2 = (-0.9/pi);
+                    shift = shift+1;
+                
+                elseif(shift == 2)
+                    disp('shift 2');
+                    handles.theta1 = -1.5/pi;
+                    handles.theta2 = 1.2/pi;
+                    shift = shift+1;
                 end
-                handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+
+                handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+% %                 if(shift == 3)
+% %                     handles.theta1 = ;
+% %                     handles.theta2 = ;
+% %                     shift = shift+1;
+% %                 end 
                 pause(1);
                 handles.theta3 = 0;
-                handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+                handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
      
                 T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
                 pause(1);
@@ -517,7 +519,7 @@ while(valbutton)
         guidata(hObject, handles);
         
         % record the joint angles into the file
-        handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+        handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         fid = fopen('shapesinfo.txt','a');
         fid2 = fopen('position.txt', 'a');
         
@@ -527,78 +529,32 @@ while(valbutton)
         % Plot the points on GUI 
         handles.robot.plot([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
         handles.theta3 = 0;
-        handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+        handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         fclose(fid); 
         fclose(fid2);
     end
 end
-% --- Executes on button press in pushbutton5.
 
-function pushbutton5_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton5 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-for theta1 = -3.14:0.1:0.2618
-    for theta2 = 0:0.1:2.26
-        for theta3 = 0:0.1:1.57
-            T= handles.robot.fkine([theta1,theta2,theta3, theta4]);
-            hold on;
-            plot3(T.t(1), T.t(2), T.t(3),'--rs');
-        end
-    end
-end
-
-%*******************************************************************
-% function playpictionary_callback(hObject, eventdata, handles)
-%
-% hObject    handle to slider1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
- 
-% Executes on button press in playpictionary.
-%*******************************************************************
-
-function playpictionary_Callback(hObject, eventdata, handles)
-
-
-    import pkg.*
-    handles.rob = drawRobot();
-    handles.figure;
-    handles.rob = PlayPictionary(handles.rob, handles.figure);
-
-% end of function
-
-%*******************************************************************
-% function   popupmenu1_Callback(hObject, eventdata, handles)
-%
-% hObject    handle to slider1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
- 
 % Executes on selection change in popupmenu1.
-%*******************************************************************
-
 function popupmenu1_Callback(hObject, eventdata, handles)
-
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
     contents = cellstr(get(hObject,'string'));
-    selected_fig = contents(get(hObject, 'Value'));
-    selected_fig;
-    if(strcmp(selected_fig, 'Square'))
-        handles.figure = 'square'; 
-    elseif(strcmp(selected_fig, 'Rectangle'))
-        handles.figure = 'rectangle';
-    elseif(strcmp(selected_fig, 'Circle'))
-        handles.figure = 'circle';
-    elseif(strcmp(selected_fig, 'Triangle'))
-        handles.figure = 'triangle';
-    elseif(strcmp(selected_fig, 'staircase'))
-        handles.figure = 'staircase';
+    selected_method = contents(get(hObject, 'Value'));
+    if(strcmp(selected_method, 'D Star'))
+        handles.figure = 'D Star'; 
+    elseif(strcmp(selected_method, 'Probabilistic Road Map'))
+        handles.figure = 'Probabilistic Road Map';
+    elseif(strcmp(selected_method, 'Distance Transform'))
+        handles.figure = 'Distance Transform';
+    else
+        handles.figure = 'D Star';
+        msg = 'Error while choosing option, defaulting to D Star.';
+        warning(msg)    
     end
-
     disp(handles.figure);
     guidata(hObject, handles);
-
- % end of function
 
 % --- Executes during object creation, after setting all properties.
 function popupmenu1_CreateFcn(hObject, eventdata, handles)
@@ -611,3 +567,62 @@ function popupmenu1_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+% --- Executes on button press in mazeSolver.
+function mazeSolver_Callback(hObject, eventdata, handles)
+% hObject    handle to mazeSolver (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    import pkg.*
+    handles.path = pathFinderRobot();
+    handles.figure;
+    handles.path = mazeSolver(handles.path, handles.figure);
+
+
+% --------------------------------------------------------------------
+function StartingPosition_Callback(hObject, eventdata, handles)
+% hObject    handle to StartingPosition (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Box1_Callback(hObject, eventdata, handles)
+% hObject    handle to Box1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Box2_Callback(hObject, eventdata, handles)
+% hObject    handle to Box2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Box3_Callback(hObject, eventdata, handles)
+% hObject    handle to Box3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Box4_Callback(hObject, eventdata, handles)
+% hObject    handle to Box4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function GoalPosition_Callback(hObject, eventdata, handles)
+% hObject    handle to GoalPosition (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function CenterBox_Callback(hObject, eventdata, handles)
+% hObject    handle to CenterBox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
