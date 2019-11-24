@@ -34,10 +34,10 @@ classdef drawRobot
             
             % Initial servo positions
             rob.t1ZeroPosition = 0.13;       % theta1 actual zero position
-            rob.t2ZeroPosition = 1;          % theta2 actual zero position
+            rob.t2ZeroPosition = 0.7;          % theta2 actual zero position
             rob.t3Up = 140/180;              % theta3 up position
             rob.t3Down = 70/180;             % theta3 in down position
-            rob.t1StartDrawingPos = 0.25;    % position for drawing purposes
+            rob.t1StartDrawingPos = 0.37;    % position for drawing purposes
             
             % Flags for debugging/code functions
             rob.workFlag = 1;

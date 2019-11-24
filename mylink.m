@@ -430,12 +430,13 @@ if valbutton == 1
     fid = fopen('shapesinfo.txt','w');
     fid2 = fopen('position.txt','w');
 end
-
+shift = 1;
 while(valbutton)
 
     f = gcf;    %gets current figure
     val = 0;      %initialize val for switch case
     disp('Press button')
+    
     w = waitforbuttonpress
     if(w==1)
         val = double(get(f,'CurrentCharacter'))
@@ -475,10 +476,23 @@ while(valbutton)
                 handles.theta3 = (45/180)*pi;
                 handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
                 pause(1);
-                if(val == 98)
-                    handles.theta1 = (-24.28/180)*pi;
-                    handles.theta2 = 0;
+                if(shift == 1)
+                    disp('shift 1');
+                    handles.theta1 = ((-0.40)/pi);
+                    handles.theta2 = (-0.9/pi);
+                    shift = shift+1;
+                
+                elseif(shift == 2)
+                    disp('shift 2');
+                    handles.theta1 = -1.5/pi;
+                    handles.theta2 = 1.2/pi;
+                    shift = shift+1;
                 end
+% %                 if(shift == 3)
+% %                     handles.theta1 = ;
+% %                     handles.theta2 = ;
+% %                     shift = shift+1;
+% %                 end 
                 handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
                 pause(1);
                 handles.theta3 = 0;
