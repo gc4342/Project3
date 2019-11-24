@@ -18,12 +18,20 @@ classdef pathFinderRobot
         workFlag;
         checkFlag;
         
+        %box variables
+        box1;
+        box2;
+        box3;
+        box4;
+        centerBox;
+        
     end
     
     methods
+        %constructor
         function path = pathFinderRobot(path)
             
-            path.arduino1 = arduino('COM6','Uno','Libraries','Servo')
+            path.arduino1 = arduino('COM5','Uno','Libraries','Servo');
             
             path.servo1 = servo(path.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6)
             path.servo2 = servo(path.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6)
@@ -39,16 +47,23 @@ classdef pathFinderRobot
             % Flags for debugging/code functions
             path.workFlag = 1;
             path.checkFlag = 1;
+            
+            %Box coordinate values
+%             box1
+%             box2
+%             box3
+%             box4
+%             centerBox
         end
         
-        function path = drawMaze(path)
+        function path = drawMap(path)
             %load map & draw it on board
         end
         
         function path = drawPath(path)
-            %use d*
+            %use one of the three algorithms to draw
         end
-                
+        
         function path = reDraw(path)
             data = load(path.filename);
             i = 1;
@@ -92,33 +107,12 @@ classdef pathFinderRobot
             pinValue2 = readDigitalPin(path.arduino1,'D5');  % pins connected to arduino
             
             if(pinValue1 == 1)
-                fprintf('\n====%s pressed the button====\n',path.player(1).name);
-                path = UserGuess(path);
-                path.player(1).buttonFlag = 1;
-                path.player(1).GuessCount = path.player(1).GuessCount - 1;
-                if((path.player(1).GuessCount ~=0) & (path.workFlag == 1))
-                    fprintf('\nYou have %d guesses left, choose wisely.\n', path.player(1).GuessCount);
-                    pause(2);
-                end
-                if ~path.player(1).GuessCount
-                    disp('You do not have any more chances left!');
-                    %path.workFlag = 0; % Flag for game over
-                end
+                disp('==== Injecting roadblock & replanning path ====\n');
+
             end
             if(pinValue2 == 1)
-                fprintf('\n====%s pressed the button====\n',path.player(2).name);
-                path = UserGuess(path);
-                path.player(2).buttonFlag = 1;
-                path.player(2).GuessCount = path.player(2).GuessCount - 1;
-                if((path.player(2).GuessCount ~=0) & (path.workFlag == 1))
-                    fprintf('You have %d guesses left, choose wisely. ', path.player(2).GuessCount);
-                    pause(2);
-                end
-                if ~path.player(2).GuessCount
-                    disp(' %d You have used all your chances!');
-                    disp(' Better Luck next time! :(');
-                    %path.workFlag = 2;  % Flag for game over
-                end
+                disp('==== Quitting maze solving and returning to start ====');
+                
             end
         end
         
@@ -135,6 +129,27 @@ classdef pathFinderRobot
                 path.checkFlag = 0;
             end
         end
+        
+        function path = mazeSolver(path, algorithm)
+            disp(' *****Maze solving has begun!!!*****')
+            disp('Press pushbutton 1 to inject an obstacle in the path.');
+            disp('Press pushbutton 2 to interrupt maze solving and go back to start position.');
+            pause(4);
+            
+            switch algorithm
+                case 'D Star'
+%                     determine how to use algorithm
+                    path = drawPath(path);
+                    
+                case 'Probabilistic Road Map'
+%                     determine how to use algorithm
+                    path = drawPath(path);
+                    
+                case 'Distance Transform'
+%                     determine how to use algorithm
+                    path = drawPath(path);
+            end %Switch case
+        end % playPictionary
         
         function path = PenUp(path)
             % Theta3 to move pen tip upwards
