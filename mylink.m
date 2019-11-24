@@ -465,14 +465,14 @@ while(valbutton)
                 pause(1);
                 if(shift == 1)
                     disp('shift 1');
-                    handles.theta1 = ((-0.40)/pi);
-                    handles.theta2 = (-0.9/pi);
+                    handles.theta1 = (-14.87/180)*pi;
+                    handles.theta2 = (0.48/180)*pi;
                     shift = shift+1;
                 
                 elseif(shift == 2)
                     disp('shift 2');
-                    handles.theta1 = -1.5/pi;
-                    handles.theta2 = 1.2/pi;
+                    handles.theta1 = (-23.4/180)*pi;
+                    handles.theta2 = (-5.0/180)*pi;
                     shift = shift+1;
                 end
 
