@@ -1,13 +1,14 @@
-%%mymap=makemap(10);
-mymap = load ('mymap_variable')
+% mymap=makemap(10);
 goal=[8,9]
 start=[5,5]
-prm=PRM(mymap);
-prm.plan(goal);
-prm.plot();
-prm.query(start,goal)
-prm.plot();
-b = prm.query(start, 'animate')
+dxform=DXform(mymap);
+dxform.plan(goal);
+dxform.plot();
+dxform.query(start,goal)
+dxform.plot();
+b = dxform.query(start, 'animate')
+new_b = dxform.query(start,goal)
+new= dxform.path(start)
 [m,n]=size(b);
 for i=1:1:m-1
     if i==1
@@ -40,11 +41,11 @@ for i=1:1:m-1  %1 to 6
 end
 
 
-hold on;
-figure(1);
-plot(b(:,1),b(:,2),'-bs');
-hold on;
-plot(s1,s2,'pm');
-
-hold on;
-plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
+% hold on;
+% figure(1);
+% plot(b(:,1),b(:,2),'-bs');
+% hold on;
+% plot(s1,s2,'pm');
+% 
+% hold on;
+% plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
