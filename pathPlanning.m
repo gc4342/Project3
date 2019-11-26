@@ -2,10 +2,8 @@ clear all;
 close all;
 clc;
 
-open mapvariable.mat
-load mapvariable.mat
-goal=[13,3]
-start=[9,11]
+goal = [13,3]
+start = [9,11]
 
 ds=Dstar(mymap);
 ds.plan(goal);

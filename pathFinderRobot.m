@@ -19,10 +19,10 @@ classdef pathFinderRobot
         checkFlag;
         
         %box variables
-        box1;
-        box2;
-        box3;
-        box4;
+        box1Center;
+        box2Center;
+        box3Center;
+        box4Center;
         centerBox;
         
     end
@@ -49,11 +49,12 @@ classdef pathFinderRobot
             path.checkFlag = 1;
             
             %Box coordinate values
-%             box1
-%             box2
-%             box3
-%             box4
-%             centerBox
+            load mapvariable.mat;
+            box1Center = mymap(3,10); %top left box center point
+            box2Center = mymap(12,10); %top right box center point
+            box3Center = mymap(12,3); %bottom right box center point
+            box4Center = mymap(3,3); %bottom left box center point
+            centerBox = mymap(8,6); %Center box center point
         end
         
         function path = drawMap(path)
