@@ -5,6 +5,8 @@ clc;
 goal = [13,3]
 start = [9,11]
 
+
+load mapvariable.mat;
 ds=Dstar(mymap);
 ds.plan(goal);
 ds.plot();

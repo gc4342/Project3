@@ -109,6 +109,7 @@ classdef pathFinderRobot
             
             if(pinValue1 == 1)
                 disp('==== Injecting roadblock & replanning path ====\n');
+                
 
             end
             if(pinValue2 == 1)
