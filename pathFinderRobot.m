@@ -76,11 +76,6 @@ classdef pathFinderRobot
                     break;
                 end
                 path = checkPushButton(path); % call to check if the button is pressed
-                if(path.workFlag == 0)% || (path.workFlag == 2))
-                    disp('=========  Game Over  ============');
-                    pause(20)
-                    break;
-                end
                 
                 q1 = data(i,1); % joint angle one
                 q2 = data(i,2); % joint angle two
