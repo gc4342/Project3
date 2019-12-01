@@ -30,7 +30,7 @@ classdef pathFinderRobot
         %constructor
         function rob = pathFinderRobot(rob)
             
-            rob.arduino1 = arduino('COM5','Uno','Libraries','Servo');
+            rob.arduino1 = arduino('COM6','Uno','Libraries','Servo');
             
             rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6)
             rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6)
