@@ -554,22 +554,26 @@ function popupmenu1_Callback(hObject, eventdata, handles)
 % hObject    handle to slider1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-contents = cellstr(get(hObject,'string'));
-selected_method = contents(get(hObject, 'Value'));
-if(strcmp(selected_method, 'D Star'))
-    handles.figure = 'D Star';
-elseif(strcmp(selected_method, 'Probabilistic Road Map'))
-    handles.figure = 'Probabilistic Road Map';
-elseif(strcmp(selected_method, 'Distance Transform'))
-    handles.figure = 'Distance Transform';
-else
-    handles.figure = 'D Star';
-    msg = 'Error while choosing option, defaulting to D Star.';
-    warning(msg)
-end
-disp(handles.figure);
-guidata(hObject, handles);
-
+    contents = cellstr(get(hObject,'string'));
+    selected_method = contents(get(hObject, 'Value'));
+    
+    if(strcmp(selected_method, 'D Star'))
+        handles.algo = 'D_Star';
+        
+    elseif(strcmp(selected_method, 'Probabilistic Road Map'))
+        handles.algo = 'PRM';
+        
+    elseif(strcmp(selected_method, 'Distance Transform'))
+        handles.algo = 'DXForm';
+        
+    else
+        handles.algo = 'D Star';
+        msg = 'Error while choosing option, defaulting to D Star.';
+        warning(msg)    
+    end
+    disp(handles.algo);
+    guidata(hObject, handles);
+    
 % --- Executes during object creation, after setting all properties.
 function popupmenu1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to popupmenu1 (see GCBO)
@@ -587,11 +591,12 @@ function mazeSolver_Callback(hObject, eventdata, handles)
 % hObject    handle to mazeSolver (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-import pkg.*
-handles.path = pathFinderRobot();
-handles.figure;
-handles.path = mazeSolver(handles.path, handles.figure);
-
+    import pkg.*
+    handles.rob = pathFinderRobot();
+    handles.algo;
+    handles.rob = mazeSolver(handles.rob, handles.algo);
+    disp(handles.rob.filename);
+    
 
 % --------------------------------------------------------------------
 function StartingPosition_Callback(hObject, eventdata, handles)
