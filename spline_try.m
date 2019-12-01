@@ -3,10 +3,7 @@ close all;
 clc;
 load mapvariable.mat;
 goal = [13,3]
-
 start = [9,11]
-
-
 ds=Dstar(mymap);
 ds.plan(goal);
 ds.plot();
@@ -34,24 +31,22 @@ for i=1:1:m-1  %1 to 6
     end 
 end
 
-
-
-for i=1:1:m-1  %1 to 6
-    if i==1
-        mtraj_path_points_lspb(i:10,1:2) = mtraj(@lspb,[path_points(i,1) path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
-    else
-        mtraj_path_points_lspb((i*10)-9:10*i,1:2) = mtraj(@lspb,[path_points(i,1) path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
-    end 
-end
-
-
-hold on;
-figure(1);
-plot(path_points(:,1),path_points(:,2),'-bs');
-hold on;
-plot(s1,s2,'pm');
-
-hold on;
-plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
-
+ x1 = path_points(1:m,1)
+ y1 = path_points(1:m,2)
+  figure(2)
+  plot(x1,y1,'r')
+  hold on;
+ 
+ pp = spline(x,y);
+ xx = linspace(9,14,50);
+ yy = ppval(pp, linspace(9,14,50));
+ plot(yy,xx'or')
+ %,(1,1:6),y(2,1:6),'-b')% 
+ axis equal 
+ 
+ 
+% PP = SPLINE(X,Y) provides the piecewise polynomial form of the 
+% %   cubic spline interpolant to the data values Y at the data sites X,
+% %   for use with the evaluator PPVAL and the spline utility UNMKPP.
+% %   X must be a vector.
 
