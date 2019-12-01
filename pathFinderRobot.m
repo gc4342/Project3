@@ -14,6 +14,7 @@ classdef pathFinderRobot
         t3Up;
         t3Down;
         t1StartDrawingPos;
+        algorithm;
         filename;
 
         %box variables
@@ -58,6 +59,35 @@ classdef pathFinderRobot
         
         function rob = drawPath(rob)
             %use one of the three algorithms to draw
+                        
+            goal = [12,10];
+            start = [8,6];
+
+            load mapvariable.mat;
+            if(rob.algorithm == 1)
+                ds=Dstar(mymap);
+            end
+            
+            ds.plan(goal);
+            ds.plot();
+            ds.query(start, 'animate');
+            path_points = ds.query(start, 'animate');
+            [m,n]=size(path_points);
+ 
+            for i=1:1:m-1  %1 to 6
+                if i==1
+                    mtraj_path_points_tpoly(1:10,1:2) = mtraj(@tpoly,[path_points(i,1) ...
+                        path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
+                else
+                    mtraj_path_points_tpoly((i*10)-9:10*i,1:2) = mtraj(@tpoly,[path_points(i,1) ...
+                        path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);                
+                end
+            end
+            dlmwrite('mtrajPoints.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
+            rob.filename = 'mtrajPoints.txt';
+            hold on;
+            plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'*w');
+            
         end
         
         function rob = reDraw(rob)
@@ -122,25 +152,27 @@ classdef pathFinderRobot
         end
         
         function rob = mazeSolver(rob, algorithm)
-            disp(' *****Maze solving has begun!!!*****')
             disp('Press pushbutton 1 to inject an obstacle in the rob.');
             disp('Press pushbutton 2 to interrupt maze solving and go back to start position.');
-            pause(4);
-            
+            disp('');
             switch algorithm
-                case 'D Star'
+                case 'D_Star'
 %                     determine how to use algorithm
-                    rob = drawpath(rob);
-                    
-                case 'Probabilistic Road Map'
-%                     determine how to use algorithm
+                    disp('         Solving using D Star             ');
+                    rob.algorithm = 1;
                     rob = drawPath(rob);
                     
-                case 'Distance Transform'
+                case 'PRM'
 %                     determine how to use algorithm
+                    rob.algorithm = 2;
+                    rob = drawPath(rob);
+                    
+                case 'DXForm'
+%                     determine how to use algorithm
+                    rob.algorithm = 3;
                     rob = drawPath(rob);
             end %Switch case
-        end % playPictionary
+        end % mazesolver
         
         function rob = PenUp(rob)
             % Theta3 to move pen tip upwards
