@@ -31,19 +31,48 @@ for i=1:1:m-1  %1 to 6
     end 
 end
 
- x1 = path_points(1:m,1)
- y1 = path_points(1:m,2)
+ x1 = path_points(1:m,1);
+ y1 = path_points(1:m,2);
  figure(2)
- plot(x1,y1,'r')
+ plot(x1,y1,'-bs')
  hold on; 
- %x = [];
- %y = [];
- pp = spline(x,y);
- xx = linspace(9,14,50);
- yy = ppval(pp, linspace(9,14,50));
- plot(yy,xx,'or')
- %,(1,1:6),y(2,1:6),'-b')% 
- axis equal 
+ plot(s1,s2,'*g');
+ hold on;
+ 
+ 
+ x11= [9.75 10];
+ y11 = [10.21 9.603];
+ pp11 = spline(x11,y11);
+ xx11 = linspace(9.75,10,10);
+ yy11 = ppval(pp11, linspace(9.75,10,10));
+ 
+ 
+ figure(3)
+ plot(x1,y1,'-bs');
+ hold on;
+ plot(xx11,yy11,'-bs')
+ hold on;
+ 
+ 
+ x12= [9 10 11 12 13 14];
+ y12 = [11 10 8 7 6 5 ];
+ pp12 = spline(x12,y12);
+ xx12 = linspace(9,14,50);
+ yy12 = ppval(pp12, linspace(9,14,50));
+ figure(4)
+ plot(x1,y1,'-bs');
+ hold on;
+ plot(xx12,yy12,'*g')
+ hold on;
+ 
+ 
+ figure(1)
+ plot(xx12,yy12,'b--o')
+ hold on;
+% axis equal 
+ 
+ 
+ 
  
  
 % PP = SPLINE(X,Y) provides the piecewise polynomial form of the 
