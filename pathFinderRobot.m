@@ -75,7 +75,7 @@ classdef pathFinderRobot
             %load map & draw it on board
         end
         
-        function rob = drawPath(rob, start_x, start_y, blk_x, blk_y, reverse, algorithm_choice, interpolation_method)
+        function rob = drawPath(rob, start_x, start_y, blk_x, blk_y, reverse)
                        
             load mapvariable.mat;
             if(blk_x ~= 0 || blk_y ~= 0)
@@ -87,7 +87,7 @@ classdef pathFinderRobot
                 rob.start = [start_x, start_y];
             end
             
-            rob.algorithm = algorithm_choice;       
+            rob.algorithm;       
             switch rob.algorithm
                case 1
                    disp('Dstar algorithm')
@@ -106,8 +106,8 @@ classdef pathFinderRobot
             ds.query(rob.start, 'animate');
             path_points = ds.query(rob.start, 'animate');
             [m,n]=size(path_points);
-            rob.interpolation_method = interpolation_method;
-            switch rob.interpolation_method
+            rob.intp_method;
+            switch rob.intp_method
                case 1
                    disp('Mtraj_tpoly')
                    for i=1:1:m-1  %1 to 6
@@ -144,20 +144,7 @@ classdef pathFinderRobot
                     disp('Not a valid option for interpolation method')
             end
             
-%             for i=1:1:m-1  %1 to 6
-%                 if i==1
-%                     mtraj_path_points_tpoly(1:10,1:2) = mtraj(@tpoly,[path_points(i,1) ...
-%                         path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
-%                 else
-%                     mtraj_path_points_tpoly((i*10)-9:10*i,1:2) = mtraj(@tpoly,[path_points(i,1) ...
-%                         path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);                
-%                 end
-%             end
-%             dlmwrite('mtrajPoints.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
-%             rob.pathfilename = 'mtrajPoints.txt';
-%             hold on;
-%             plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'*w');
-%             pause(2);
+
         end
         
         function rob = checkPushButton(rob, new_x, new_y, blk_x, blk_y)
@@ -192,10 +179,11 @@ classdef pathFinderRobot
             end
         end
         
-        function rob = mazeSolver(rob, algorithm)
+        function rob = mazeSolver(rob, algorithm, intp_method)
             disp('Press pushbutton 1 to inject an obstacle in the rob.');
             disp('Press pushbutton 2 to interrupt maze solving and go back to start position.');
             disp('');
+            rob.intp_method = intp_method;
             switch algorithm
                 case 'D_Star'
 %                     determine how to use algorithm
