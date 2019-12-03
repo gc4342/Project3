@@ -3,7 +3,6 @@ close all;
 clc;
 
 load mapvariable.mat;
-
 box1Center = mymap(3,10); %top left box center point
 box2Center = mymap(12,10); %top right box center point
 box3Center = mymap(12,3); %bottom right box center point

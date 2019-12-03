@@ -6,7 +6,7 @@ function varargout = mylink(varargin)
 %      the existing singleton*.
 %      MYLINK('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in MYLINK.M with the given input arguments.
-% Last Modified by GUIDE v2.5 01-Dec-2019 19:13:40
+% Last Modified by GUIDE v2.5 03-Dec-2019 08:53:51
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -39,6 +39,12 @@ handles.theta1 = 0;  % joint 1
 handles.theta2 = 0;  % joint 2
 handles.theta3 = 0;  % joint 3
 handles.theta4 = 0;
+
+handles.box1 = [3,10]; %top left box center point
+handles.box2 = [12,10]; %top right box center point
+handles.box3 = [12,3]; %bottom right box center point
+handles.box4 = [3,3]; %bottom left box center point
+handles.centerBox = [8,6]; %Center box center point
 
 handles.filename = '';
 % Update handles structure
@@ -152,6 +158,7 @@ L(3) = Revolute ('d', 2.6, 'a', 0, 'alpha', pi/2, 'offset', 0); %DH parameters f
 L(4) = Revolute ('d', 8.5, 'a', 0, 'alpha', 0, 'offset', 0*pi/180);
 
 handles.robot = SerialLink(L, 'name', 'robot');
+
 warning('off','all');
 
 handles.robot.base = [1 0 0 0; 0 1 0 10.2; 0 0 1 5.3; 0 0 0 1]; % base of robot
@@ -547,15 +554,15 @@ function popupmenu1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
     contents = cellstr(get(hObject,'string'));
-    selected_method = contents(get(hObject, 'Value'));
+    algorithm_method = contents(get(hObject, 'Value'));
     
-    if(strcmp(selected_method, 'D Star'))
+    if(strcmp(algorithm_method, 'D Star'))
         handles.algo = 'D_Star';
         
-    elseif(strcmp(selected_method, 'Probabilistic Road Map'))
+    elseif(strcmp(algorithm_method, 'Probabilistic Road Map'))
         handles.algo = 'PRM';
         
-    elseif(strcmp(selected_method, 'Distance Transform'))
+    elseif(strcmp(algorithm_method, 'Distance Transform'))
         handles.algo = 'DXForm';
         
     else
@@ -586,7 +593,7 @@ function mazeSolver_Callback(hObject, eventdata, handles)
     import pkg.*
     handles.rob = pathFinderRobot();
     handles.algo;
-    handles.rob = mazeSolver(handles.rob, handles.algo);
+    handles.rob = mazeSolver(handles.rob, handles.algo,handles.intp_method);
     
         handles.theta1 = -47.3/180;
         handles.theta2 = 50.108/180;
@@ -619,35 +626,6 @@ function mazeSolver_Callback(hObject, eventdata, handles)
         i = i+1;
      end
 
-function Box1_Callback(hObject, eventdata, handles)
-% hObject    handle to Box1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-%box1Center = mymap(3,10);
-disp('Box1');
-
-% --------------------------------------------------------------------
-function Box2_Callback(hObject, eventdata, handles)
-% hObject    handle to Box2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-%box2Center = mymap(12,10);
-disp('Box2');
-% --------------------------------------------------------------------
-function Box3_Callback(hObject, eventdata, handles)
-% hObject    handle to Box3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-disp('Box3');
-
-% --------------------------------------------------------------------
-function Box4_Callback(hObject, eventdata, handles)
-% hObject    handle to Box4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-disp('Box 4');
 
 % --------------------------------------------------------------------
 function GoalPosition_Callback(hObject, eventdata, handles)
@@ -657,15 +635,127 @@ function GoalPosition_Callback(hObject, eventdata, handles)
 disp('Goal Position');
 
 % --------------------------------------------------------------------
-function start_centerBox_Callback(hObject, eventdata, handles)
-% hObject    handle to start_centerBox (see GCBO)
+function From_centerBox_Callback(hObject, eventdata, handles)
+% hObject    handle to From_centerBox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('Center box 1');
+handles.rob.start = handles.centerBox;
+disp('Starting from center box'); 
 
 
 % --------------------------------------------------------------------
-function CenterBox_Callback(hObject, eventdata, handles)
-% hObject    handle to CenterBox (see GCBO)
+function To_CenterBox_Callback(hObject, eventdata, handles)
+% hObject    handle to To_CenterBox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.rob.goal = handles.centerBox;
+disp('Going to center box');
+
+
+% --- Executes on selection change in popupmenu4.
+function popupmenu4_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    contents = cellstr(get(hObject,'string'));
+    intp_method = contents(get(hObject, 'Value'));
+    
+    if(strcmp(intp_method, 'mtraj-lspb'))
+        handles.intp_method = 'mtraj-lspb';
+        disp('Using mtraj-lspb');
+        
+    elseif(strcmp(intp_method, 'mtraj-tpoly'))
+        handles.intp_method = 'mtraj-tpoly';
+        disp('Using mtraj-tpoly');
+ 
+    else
+        handles.intp_method = 'mtraj-tpoly';
+        msg = 'Error while choosing option, defaulting to mtraj-tpoly.';
+        warning(msg)    
+    end
+    disp(handles.intp_method);
+    guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu4_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function To_Box1_Callback(hObject, eventdata, handles)
+% hObject    handle to To_Box1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.goal = handles.box1;
+disp('Going to box1'); 
+
+
+% --------------------------------------------------------------------
+function To_Box2_Callback(hObject, eventdata, handles)
+% hObject    handle to To_Box2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.goal = handles.box2;
+disp('Going to box2'); 
+
+% --------------------------------------------------------------------
+function To_Box3_Callback(hObject, eventdata, handles)
+% hObject    handle to To_Box3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.goal = handles.box3;
+disp('Going to box3'); 
+
+
+% --------------------------------------------------------------------
+function To_Box4_Callback(hObject, eventdata, handles)
+% hObject    handle to To_Box4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.goal = handles.box4;
+disp('Going to box4'); 
+
+
+% --------------------------------------------------------------------
+function From_Box1_Callback(hObject, eventdata, handles)
+% hObject    handle to From_Box1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.start = handles.box1;
+disp('Starting from box1');
+
+
+% --------------------------------------------------------------------
+function From_Box2_Callback(hObject, eventdata, handles)
+% hObject    handle to From_Box2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.start = handles.box2;
+disp('Starting from box2');
+
+
+% --------------------------------------------------------------------
+function From_Box3_Callback(hObject, eventdata, handles)
+% hObject    handle to From_Box3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.start = handles.box3;
+disp('Starting from box3');
+
+
+% --------------------------------------------------------------------
+function From_Box4_Callback(hObject, eventdata, handles)
+% hObject    handle to From_Box4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.rob.start = handles.box4;
+disp('Starting from box4');
