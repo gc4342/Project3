@@ -561,7 +561,7 @@ function popupmenu1_Callback(hObject, eventdata, handles)
     contents = cellstr(get(hObject,'string'));
     algorithm_method = contents(get(hObject, 'Value'));
     
-    if(strcmp(selected_method, 'D Star'))
+    if(strcmp(algorithm_method, 'D Star'))
         handles.algo = 'D_Star';
         
     elseif(strcmp(algorithm_method, 'Probabilistic Road Map'))
