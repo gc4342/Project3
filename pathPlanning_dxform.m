@@ -1,14 +1,14 @@
-% mymap=makemap(10);
-goal=[8,9]
-start=[5,5]
+ %mymap=makemap(10);
+goal = [13,3]
+start = [9,11]
+load mapvariable.mat;
+
 dxform=DXform(mymap);
 dxform.plan(goal);
 dxform.plot();
 dxform.query(start,goal)
 dxform.plot();
 b = dxform.query(start, 'animate')
-new_b = dxform.query(start,goal)
-new= dxform.path(start)
 [m,n]=size(b);
 for i=1:1:m-1
     if i==1
@@ -21,6 +21,8 @@ for i=1:1:m-1
      
     end
 end
+
+
 
 for i=1:1:m-1  %1 to 6
     if i==1
@@ -39,11 +41,28 @@ for i=1:1:m-1  %1 to 6
         mtraj_path_points_lspb((i*10)-9:10*i,1:2) = mtraj(@lspb,[b(i,1) b(i,2)], [b(i+1,1) b(i+1,2)],10);
     end 
 end
+hold on;
+current_position =  b(3,1:2)
+%push button press
+figure(2);
+obstacle_at =b(5,1:2) 
+mymap(obstacle_at(2),obstacle_at(1)) = 1;
+hold on;
+goal=[13,3]
+dxform=DXform(mymap);
+dxform.plan(goal);
+dxform.plot();
+hold on;
+dxform.query(current_position,goal)
+dxform.plot();
+b2 = dxform.query(current_position, 'animate')
+hold on;
+
 
 
 % hold on;
 % figure(1);
-% plot(b(:,1),b(:,2),'-bs');
+% plot(b(:,1),b(:,3),'-bs');
 % hold on;
 % plot(s1,s2,'pm');
 % 
