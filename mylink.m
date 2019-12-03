@@ -6,7 +6,7 @@ function varargout = mylink(varargin)
 %      the existing singleton*.
 %      MYLINK('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in MYLINK.M with the given input arguments.
-% Last Modified by GUIDE v2.5 03-Dec-2019 08:53:51
+% Last Modified by GUIDE v2.5 03-Dec-2019 11:58:57
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -759,3 +759,15 @@ function From_Box4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 handles.rob.start = handles.box4;
 disp('Starting from box4');
+
+
+% --- Executes on button press in DrawMap.
+function DrawMap_Callback(hObject, eventdata, handles)
+% hObject    handle to DrawMap (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    import pkg.*
+    disp('DrawMap');
+    handles.rob = pathFinderRobot();
+    handles.rob = drawMap(handles.rob);
+
