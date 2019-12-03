@@ -10,10 +10,10 @@ box3Center = mymap(12,3); %bottom right box center point
 box4Center = mymap(3,3); %bottom left box center point
 centerBox = mymap(8,6); %Center box center point
 
-mymap(9,6) = 1;
+mymap(10,6) = 1;
 
 goal = [10,3];
-start = [8,6];
+start = [3,10];
 
 ds=Dstar(mymap);
 ds.plan(goal);

@@ -15,7 +15,14 @@ classdef pathFinderRobot
         t3Down;
         t1StartDrawingPos;
         algorithm;
-        filename;
+        mazefilename;
+        pathfilename;
+        
+        workFlag = 1;
+        checkFlag = 1;
+        
+        start;
+        goal;
 
         %box variables
         box1Center;
@@ -28,20 +35,20 @@ classdef pathFinderRobot
     
     methods
         %constructor
-        function rob = pathFinderRobot(rob)
+        function rob = pathFinderRobot()
             
             rob.arduino1 = arduino('COM6','Uno','Libraries','Servo');
             
-            rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6)
-            rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6)
-            rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6)
+            rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
+            rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
+            rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6);
             
             % Initial servo positions
             rob.t1ZeroPosition = 0.13;       % theta1 actual zero position
-            rob.t2ZeroPosition = 1;          % theta2 actual zero position
+            rob.t2ZeroPosition = 0.7;          % theta2 actual zero position
             rob.t3Up = 140/180;              % theta3 up position
-            rob.t3Down = 70/180;             % theta3 in down position
-            rob.t1StartDrawingPos = 0.25;    % position for drawing purposes
+            rob.t3Down = 60/180;             % theta3 in down position
+            rob.t1StartDrawingPos = 0.34;    % position for drawing purposes
             
             
             %Box coordinate values
@@ -51,27 +58,40 @@ classdef pathFinderRobot
             box3Center = mymap(12,3); %bottom right box center point
             box4Center = mymap(3,3); %bottom left box center point
             centerBox = mymap(8,6); %Center box center point
+            
+            rob.workFlag = 1;
+            rob.checkFlag = 1;
+            rob = PenUp(rob);
+            rob.mazefilename = 'shapesinfo.txt';
+            rob.start = [3, 10];
+            rob.goal = [12,3];
         end
         
         function rob = drawMap(rob)
             %load map & draw it on board
         end
         
-        function rob = drawPath(rob)
-            %use one of the three algorithms to draw
-                        
-            goal = [12,10];
-            start = [8,6];
-
+        function rob = drawPath(rob, start_x, start_y, blk_x, blk_y, reverse)
+                       
             load mapvariable.mat;
+            if(blk_x ~= 0 || blk_y ~= 0)
+                disp('I did come here');
+                mymap(blk_y, blk_x) = 1;
+            end
+            if(reverse == 1)
+                rob.goal = rob.start;
+                rob.start = [start_x, start_y];
+            end
+            
+            rob.algorithm = 1;
             if(rob.algorithm == 1)
                 ds=Dstar(mymap);
             end
             
-            ds.plan(goal);
+            ds.plan(rob.goal);
             ds.plot();
-            ds.query(start, 'animate');
-            path_points = ds.query(start, 'animate');
+            ds.query(rob.start, 'animate');
+            path_points = ds.query(rob.start, 'animate');
             [m,n]=size(path_points);
  
             for i=1:1:m-1  %1 to 6
@@ -84,55 +104,26 @@ classdef pathFinderRobot
                 end
             end
             dlmwrite('mtrajPoints.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
-            rob.filename = 'mtrajPoints.txt';
+            rob.pathfilename = 'mtrajPoints.txt';
             hold on;
             plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'*w');
-            
+            pause(2);
         end
         
-        function rob = reDraw(rob)
-            data = load(path.filename);
-            i = 1;
-            writePosition(rob.servo3, rob.t3Up);
-            pause(1);
-            while true % if file is empty > penup
-                if ~isfloat(data(i+1,1))
-                    writePosition(s3, 160/180);
-                    break;
-                end
-                path = checkPushButton(path); % call to check if the button is pressed
-                q1 = data(i,1); % joint angle one
-                q2 = data(i,2); % joint angle two
-                
-                pos1 = abs(rob.t1StartDrawingPos-q1); % how much theta we move
-                pos2 = abs(rob.t2ZeroPosition-q2);
-                writePosition(rob.servo1, pos1);
-                writePosition(rob.servo2, pos2);
-                current_pos1 = readPosition(rob.servo1);
-                current_pos1 = current_pos1*180;
-                current_pos2 = readPosition(rob.servo2);
-                current_pos2 = current_pos2*180;
-                if (i==1)
-                    pause(2);
-                    writePosition(rob.servo3, rob.t3Down); % get ready to start drawing
-                end
-                pause(0.25);
-                i = i+1;
-            end
-        end
-        
-        function rob = checkPushButton(rob)
+        function rob = checkPushButton(rob, new_x, new_y, blk_x, blk_y)
             %check if any button is pressed
             pinValue1 = readDigitalPin(rob.arduino1, 'D4'); % pins connected to arduino
             pinValue2 = readDigitalPin(rob.arduino1,'D5');  % pins connected to arduino
             
             if(pinValue1 == 1)
                 disp('==== Injecting roadblock & replanning path ====\n');
-                
-
+                rob = drawPath(rob, fix(new_x), fix(new_y), fix(blk_x), fix(blk_y), 0);
+                rob.workFlag = 0;
             end
             if(pinValue2 == 1)
                 disp('==== Quitting maze solving and returning to start ====');
+                rob = drawPath(rob, fix(new_x), fix(new_y), 0, 0, 1);
+                rob.workFlag = 0;
                 
             end
         end
@@ -160,7 +151,7 @@ classdef pathFinderRobot
 %                     determine how to use algorithm
                     disp('         Solving using D Star             ');
                     rob.algorithm = 1;
-                    rob = drawPath(rob);
+                    rob = drawPath(rob, rob.start,rob.goal, 0, 0, 0);
                     
                 case 'PRM'
 %                     determine how to use algorithm

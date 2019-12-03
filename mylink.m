@@ -6,7 +6,7 @@ function varargout = mylink(varargin)
 %      the existing singleton*.
 %      MYLINK('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in MYLINK.M with the given input arguments.
-% Last Modified by GUIDE v2.5 24-Nov-2019 13:24:04
+% Last Modified by GUIDE v2.5 01-Dec-2019 19:13:40
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -409,7 +409,7 @@ function checkbox1_Callback(hObject, eventdata, handles)
 T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 
-handles.path = pathFinderRobot();      % initiate the object of class drawRobot
+handles.rob = pathFinderRobot();      % initiate the object of class drawRobot
 valbutton = get(hObject,'Value')  % fetch the value of the checkbox
 handles.theta3 = (45/180)*pi;
 %if the button is pressed, open the files,to void rewriting of the file, when
@@ -460,47 +460,44 @@ while(valbutton)
                 val=0;
             case 98
                 disp('moving to next location');
+                handles.rob = PenUp(handles.rob);
                 handles.theta3 = (45/180)*pi;
-                handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+                handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
                 pause(1);
                 if(shift == 1)
-                    disp('box 1'); 
-                    handles.theta1 = (-10.5/180)*pi; %box 1
-                    handles.theta2 = (33/180)*pi;
+                    disp('box 2');
+                    handles.theta1 = (-49/180)*pi; %box 2
+                    handles.theta2 = (29.8/180)*pi;
                     shift = shift+1;
                     
                 elseif(shift == 2)
-                    disp('box 2');
-                    handles.theta1 = (-14/180)*pi; %box 2
-                    handles.theta2 = (0.5/180)*pi;
+                    disp('box 3');
+                    handles.theta1 = (-35/180)*pi; %box 3
+                    handles.theta2 = (66/180)*pi;
                     shift = shift+1;
                     
                 elseif(shift == 3)
-                    disp('box 3');
-                    handles.theta1 = (-33/180)*pi; %box 3
-                    handles.theta2 = (97/180)*pi;
+                    disp('Middle Box');
+                    handles.theta1 = (-77/180)*pi; %Middle Box
+                    handles.theta2 = (51/180)*pi;
                     shift = shift+1;
                     
                 elseif(shift == 4)
-                    disp('Middle Box');
-                    handles.theta1 = (-29/180)*pi; %Middle Box
-                    handles.theta2 = (60.5/180)*pi;
-                    shift = shift+1;
-                    
-                elseif(shift == 5)
                     disp('box 4');
-                    handles.theta1 = (-69.5/180)*pi; %box 4
-                    handles.theta2 = (86/180)*pi;
+                    handles.theta1 = (-39/180)*pi; %box 4
+                    handles.theta2 = (41.8/180)*pi;
                     shift = shift+1;
                 end
                 
-                handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+                handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
                 pause(1);
                 handles.theta3 = 0;
-                handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+                handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
                 
                 T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
                 pause(1);
+                fid = fopen('shapesinfo.txt','a');
+                fprintf(fid, "%f\t%f\t%f\n", '=', '=', '=');
                 
             otherwise
                 disp('wrong option');
@@ -533,17 +530,17 @@ while(valbutton)
         guidata(hObject, handles);
         
         % record the joint angles into the file
-        handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+        handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         fid = fopen('shapesinfo.txt','a');
         fid2 = fopen('position.txt', 'a');
         
-        fprintf(fid, "%f\t%f\n",handles.theta1/pi, handles.theta2/pi, handles.theta3/pi);
+        fprintf(fid, "%f\t%f\t%f\n",handles.theta1/pi, handles.theta2/pi, handles.theta3/pi);
         fprintf(fid2, "%f\t%f\n", T.t(1), T.t(2));
         
         % Plot the points on GUI
         handles.robot.plot([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
         handles.theta3 = 0;
-        handles.path = recordMovement(handles.path,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+        handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         fclose(fid);
         fclose(fid2);
     end
@@ -595,24 +592,45 @@ function mazeSolver_Callback(hObject, eventdata, handles)
     handles.rob = pathFinderRobot();
     handles.algo;
     handles.rob = mazeSolver(handles.rob, handles.algo);
-    disp(handles.rob.filename);
     
+        handles.theta1 = -47.3/180;
+        handles.theta2 = 50.108/180;
+        handles.theta3 = 0;
+        handles.theta4 = 0;
+        
+        T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
+        q = handles.robot.ikcon(T, [handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
+        handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+        
+     i = 1;   
+     while true
+        data = load('mtrajPoints.txt');
+        disp(i);
+        handles.rob = checkPushButton(handles.rob, data(i,1), data(i,2), data(i+2,1), data(i+2,2));
+        if(handles.rob.workFlag == 0)
+            i = 1
+            T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
+            q = handles.robot.ikcon(T, [handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
+            handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);   
+            handles.rob.workFlag = 1;
+        end
+        T.t(1) = T.t(1) - (data(i,2) - data(i+1,2));
+        T.t(2) = T.t(2) + (data(i,1) - data(i+1,1));
+        q = handles.robot.ikcon(T, [handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
+        handles.theta1 = q(1);
+        handles.theta2 = q(2);
+        handles.theta3 = 0;
+        handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
+        i = i+1;
+     end
 
-% --------------------------------------------------------------------
-function StartingPosition_Callback(hObject, eventdata, handles)
-% hObject    handle to StartingPosition (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --------------------------------------------------------------------
 function Box1_Callback(hObject, eventdata, handles)
 % hObject    handle to Box1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 %box1Center = mymap(3,10);
-
+disp('Box1');
 
 % --------------------------------------------------------------------
 function Box2_Callback(hObject, eventdata, handles)
@@ -621,26 +639,34 @@ function Box2_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %box2Center = mymap(12,10);
-
+disp('Box2');
 % --------------------------------------------------------------------
 function Box3_Callback(hObject, eventdata, handles)
 % hObject    handle to Box3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+disp('Box3');
 
 % --------------------------------------------------------------------
 function Box4_Callback(hObject, eventdata, handles)
 % hObject    handle to Box4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+disp('Box 4');
 
 % --------------------------------------------------------------------
 function GoalPosition_Callback(hObject, eventdata, handles)
 % hObject    handle to GoalPosition (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('Goal Position');
+
+% --------------------------------------------------------------------
+function start_centerBox_Callback(hObject, eventdata, handles)
+% hObject    handle to start_centerBox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+disp('Center box 1');
 
 
 % --------------------------------------------------------------------
