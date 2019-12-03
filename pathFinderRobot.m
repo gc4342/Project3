@@ -59,6 +59,8 @@ classdef pathFinderRobot
             box4Center = mymap(3,3); %bottom left box center point
             centerBox = mymap(8,6); %Center box center point
             
+
+            
             rob.workFlag = 1;
             rob.checkFlag = 1;
             rob = PenUp(rob);
