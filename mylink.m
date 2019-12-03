@@ -159,8 +159,6 @@ L(4) = Revolute ('d', 8.5, 'a', 0, 'alpha', 0, 'offset', 0*pi/180);
 
 handles.robot = SerialLink(L, 'name', 'robot');
 
-load mapvariable.mat;
-
 warning('off','all');
 
 handles.robot.base = [1 0 0 0; 0 1 0 10.2; 0 0 1 5.3; 0 0 0 1]; % base of robot
