@@ -89,13 +89,13 @@ classdef pathFinderRobot
             
             rob.algorithm;       
             switch rob.algorithm
-               case 1
+               case 'D_Star'
                    disp('Dstar algorithm')
                    ds=Dstar(mymap);
-               case 2
+               case 'PRM'
                    disp('PRM algorithm')
                    ds=PRM(mymap);
-               case 3
+               case 'DXForm'
                    disp('DxForm algorithm')
                    ds=DXform(mymap);
                otherwise
@@ -108,7 +108,7 @@ classdef pathFinderRobot
             [m,n]=size(path_points);
             rob.intp_method;
             switch rob.intp_method
-               case 1
+               case 'mtraj-tpoly'
                    disp('Mtraj_tpoly')
                    for i=1:1:m-1  %1 to 6
                        if i==1
@@ -119,12 +119,12 @@ classdef pathFinderRobot
                           path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);                
                        end
                    end
-                   dlmwrite('mtrajPointsTpoly.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
-                   rob.pathfilename = 'mtrajPointsTpoly.txt';
+                   dlmwrite('mtrajPoints.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
+                   rob.pathfilename = 'mtrajPoints.txt.txt';
                    hold on;
                    plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'*w');
                    pause(2);
-               case 2
+               case 'mtraj-lspb'
                    disp('Mtraj_lspb')
                     for i=1:1:m-1  %1 to 6
                        if i==1
@@ -135,8 +135,8 @@ classdef pathFinderRobot
                           path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);                
                        end
                    end
-                   dlmwrite('mtrajPointsLspb.txt',mtraj_path_points_lspb,'delimiter','\t','newline','pc');
-                   rob.pathfilename = 'mtrajPointsLspb.txt';
+                   dlmwrite('mtrajPoints.txt.txt',mtraj_path_points_lspb,'delimiter','\t','newline','pc');
+                   rob.pathfilename = 'mtrajPoints.txt.txt';
                    hold on;
                    plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
                    pause(2);                  
