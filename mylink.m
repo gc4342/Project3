@@ -432,28 +432,23 @@ while(valbutton)
             val=0
         end
         switch (val)
-            case 97 %diagonal
-                disp('Moving diagonal');
-                T.t(1) = T.t(1) - 0.2828
-                T.t(2) = T.t(2) - 0.2828
-                %T.t(1);
-                val = 0;
-            case 28 %Right
+
+            case 31 %Right
                 disp('decrease in x');
                 T.t(1) = T.t(1) - 0.1
                 %T.t(1)
                 val=0;
-            case 29 %Left
+            case 30 %Left
                 disp('increase in x');
                 T.t(1) = T.t(1) + 0.1
                 %                 T.t(1)
                 val=0;
-            case 30 %up
+            case 28 %up
                 disp('increase in y');
                 T.t(2) = T.t(2) + 0.1
                 %                 T.t(2)
                 val=0;
-            case 31 %down
+            case 29 %down
                 disp('decrease in y');
                 T.t(2) = T.t(2) - 0.1
                 %                 T.t(2)

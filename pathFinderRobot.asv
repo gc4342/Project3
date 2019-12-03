@@ -71,12 +71,12 @@ classdef pathFinderRobot
             data = load('shapesinfo.txt');
             i = 1;
             writePosition(rob.servo3, rob.t3Up);
+            if (data(i, 1) == '61.000000')
+                    i = i+1;
+            end
           
             while true % if file is empty > penup
-                if (data(i, 1) == 61.000000)
-                    i = i+1;
-                    writePosition(rob.servo3, rob.t3Up);
-                end
+                
                 rob = checkPushButton(rob); % call to check if the button is pressed
                 if(rob.workFlag == 0)% || (rob.workFlag == 2))
                     disp('=========  Game Over  ============');
@@ -95,7 +95,8 @@ classdef pathFinderRobot
                 current_pos1 = current_pos1*180;
                 current_pos2 = readPosition(rob.servo2);
                 current_pos2 = current_pos2*180;
-                if (i==1 || i-1 == 61.000000)
+                if (i==1)
+                    pause(2);
                     writePosition(rob.servo3, rob.t3Down); % get ready to start drawing
                 end
                 pause(0.25);
