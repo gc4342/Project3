@@ -663,22 +663,22 @@ function popupmenu4_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     contents = cellstr(get(hObject,'string'));
-    int_method = contents(get(hObject, 'Value'));
+    intp_method = contents(get(hObject, 'Value'));
     
-    if(strcmp(int_method, 'mtraj-lspb'))
-        handles.algo = 'mtraj-lspb';
+    if(strcmp(intp_method, 'mtraj-lspb'))
+        handles.intp_method = 'mtraj-lspb';
         disp('Using mtraj-lspb');
         
-    elseif(strcmp(int_method, 'mtraj-tpoly'))
-        handles.algo = 'mtraj-tpoly';
+    elseif(strcmp(intp_method, 'mtraj-tpoly'))
+        handles.intp_method = 'mtraj-tpoly';
         disp('Using mtraj-tpoly');
  
     else
-        handles.algo = 'mtraj-tpoly';
+        handles.intp_method = 'mtraj-tpoly';
         msg = 'Error while choosing option, defaulting to mtraj-tpoly.';
         warning(msg)    
     end
-    disp(handles.algo);
+    disp(handles.intp_method);
     guidata(hObject, handles);
 
 
