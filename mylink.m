@@ -559,15 +559,15 @@ function popupmenu1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
     contents = cellstr(get(hObject,'string'));
-    selected_method = contents(get(hObject, 'Value'));
+    algorithm_method = contents(get(hObject, 'Value'));
     
     if(strcmp(selected_method, 'D Star'))
         handles.algo = 'D_Star';
         
-    elseif(strcmp(selected_method, 'Probabilistic Road Map'))
+    elseif(strcmp(algorithm_method, 'Probabilistic Road Map'))
         handles.algo = 'PRM';
         
-    elseif(strcmp(selected_method, 'Distance Transform'))
+    elseif(strcmp(algorithm_method, 'Distance Transform'))
         handles.algo = 'DXForm';
         
     else
