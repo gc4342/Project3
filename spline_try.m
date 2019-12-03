@@ -36,8 +36,8 @@ end
  figure(2)
  plot(x1,y1,'r')
  hold on; 
- x = [];
- y = [];
+ %x = [];
+ %y = [];
  pp = spline(x,y);
  xx = linspace(9,14,50);
  yy = ppval(pp, linspace(9,14,50));
