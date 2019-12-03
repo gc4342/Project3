@@ -6,7 +6,7 @@ function varargout = mylink(varargin)
 %      the existing singleton*.
 %      MYLINK('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in MYLINK.M with the given input arguments.
-% Last Modified by GUIDE v2.5 01-Dec-2019 19:13:40
+% Last Modified by GUIDE v2.5 03-Dec-2019 08:37:01
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -674,3 +674,26 @@ function CenterBox_Callback(hObject, eventdata, handles)
 % hObject    handle to CenterBox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on selection change in popupmenu4.
+function popupmenu4_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu4 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu4
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu4_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
