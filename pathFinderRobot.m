@@ -12,8 +12,7 @@ classdef pathFinderRobot
         t3Down;                 % Pen down position for joint 3
         t1StartDrawingPos;      % Joint position for joint 1, where it start drawing
         algorithm;
-        algorithm_choice;
-        interpolation_method;
+        intp_method;
         mazefilename;
         pathfilename;
         
@@ -42,12 +41,13 @@ classdef pathFinderRobot
         %             ready to draw the map and begin maze solving
         %******************************************************************
         function rob = pathFinderRobot()
-            
+ %{  
+         NO HARDWARE
             rob.arduino1 = arduino('COM5','Uno','Libraries','Servo');
             rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
             rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
             rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6);
-            
+   %}         
             % Initial servo positions
             rob.t1ZeroPosition = 0.13;       % theta1 actual zero position
             rob.t2ZeroPosition = 0.7;        % theta2 actual zero position
@@ -57,7 +57,7 @@ classdef pathFinderRobot
             
             rob.workFlag = 1;
             rob.checkFlag = 1;
-            rob = PenUp(rob);
+%     NO HARDWARE        rob = PenUp(rob);
             rob.mazefilename = 'shapesinfo.txt';
             rob.start = [3, 10];
             rob.goal = [12, 3];
@@ -240,25 +240,23 @@ classdef pathFinderRobot
             end
         end
         
-        function rob = mazeSolver(rob, algorithm, intp_method)
+        function rob = mazeSolver(rob)
             disp('Press pushbutton 1 to inject an obstacle in the rob.');
             disp('Press pushbutton 2 to interrupt maze solving and go back to start position.');
             disp('');
-            rob.intp_method = intp_method;
-            switch algorithm
+            disp(rob.algorithm)
+            %rob.intp_method = intp_method;
+            switch rob.algorithm
                 case 'D_Star'
                     disp('Solving using D Star');
-                    rob.algorithm = 1;
                     rob = drawPath(rob, rob.start,rob.goal, 0, 0, 0);
                     
                 case 'PRM'
                     disp('Solving using PRM');
-                    rob.algorithm = 2;
                     rob = drawPath(rob, rob.start,rob.goal, 0, 0, 0);
                     
                 case 'DXForm'
                     disp('Solving using DXForm');
-                    rob.algorithm = 3;
                     rob = drawPath(rob, rob.start,rob.goal, 0, 0, 0);
             end %Switch case
         end % mazesolver

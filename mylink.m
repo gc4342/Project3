@@ -178,6 +178,7 @@ set(handles.edit4, 'String', T.t(1));
 set(handles.edit5, 'String', T.t(2));
 set(handles.edit6, 'String', T.t(3));
 
+handles.rob = pathFinderRobot();
 % Update handles structure
 guidata(hObject, handles);
 
@@ -416,7 +417,7 @@ function checkbox1_Callback(hObject, eventdata, handles)
 T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 
-handles.rob = pathFinderRobot();      % initiate the object of class drawRobot
+% handles.rob = pathFinderRobot();      % initiate the object of class drawRobot
 valbutton = get(hObject,'Value')  % fetch the value of the checkbox
 handles.theta3 = (45/180)*pi;
 %if the button is pressed, open the files,to void rewriting of the file, when
@@ -557,20 +558,20 @@ function popupmenu1_Callback(hObject, eventdata, handles)
     algorithm_method = contents(get(hObject, 'Value'));
     
     if(strcmp(algorithm_method, 'D Star'))
-        handles.algo = 'D_Star';
+        handles.rob.algorithm = 'D_Star';
         
     elseif(strcmp(algorithm_method, 'Probabilistic Road Map'))
-        handles.algo = 'PRM';
+        handles.rob.algorithm = 'PRM';
         
     elseif(strcmp(algorithm_method, 'Distance Transform'))
-        handles.algo = 'DXForm';
+        handles.rob.algorithm = 'DXForm';
         
     else
-        handles.algo = 'D Star';
+        handles.rob.algorithm = 'D Star';
         msg = 'Error while choosing option, defaulting to D Star.';
         warning(msg)    
     end
-    disp(handles.algo);
+    %disp(handles.rob.algorithm);
     guidata(hObject, handles);
     
 % --- Executes during object creation, after setting all properties.
@@ -591,11 +592,11 @@ function mazeSolver_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     import pkg.*
-    handles.rob = pathFinderRobot();
-    handles.algo;
-    handles.intp_method;
-    handles.rob = mazeSolver(handles.rob, handles.algo,handles.intp_method);
-    
+    handles.rob.algorithm
+    handles.rob.intp_method
+    handles.rob = mazeSolver(handles.rob);
+%{ 
+   % Remove these comments if you have the hardware: NO HARDWARE
         handles.theta1 = -47.3/180;
         handles.theta2 = 50.108/180;
         handles.theta3 = 0;
@@ -626,7 +627,7 @@ function mazeSolver_Callback(hObject, eventdata, handles)
         handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         i = i+1;
      end
-
+%}
 
 % --------------------------------------------------------------------
 function GoalPosition_Callback(hObject, eventdata, handles)
@@ -662,19 +663,19 @@ function popupmenu4_Callback(hObject, eventdata, handles)
     intp_method = contents(get(hObject, 'Value'));
     
     if(strcmp(intp_method, 'mtraj-lspb'))
-        handles.intp_method = 'mtraj-lspb';
-        disp('Using mtraj-lspb');
+        handles.rob.intp_method = 'mtraj-lspb';
+        %disp('Using mtraj-lspb');
         
     elseif(strcmp(intp_method, 'mtraj-tpoly'))
-        handles.intp_method = 'mtraj-tpoly';
-        disp('Using mtraj-tpoly');
+        handles.rob.intp_method = 'mtraj-tpoly';
+        %disp('Using mtraj-tpoly');
  
     else
-        handles.intp_method = 'mtraj-tpoly';
+        handles.rob.intp_method = 'mtraj-tpoly';
         msg = 'Error while choosing option, defaulting to mtraj-tpoly.';
         warning(msg)    
     end
-    disp(handles.intp_method);
+    %disp(handles.rob.intp_method);
     guidata(hObject, handles);
 
 
@@ -769,6 +770,6 @@ function DrawMap_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     import pkg.*
     disp('DrawMap');
-    handles.rob = pathFinderRobot();
+%     handles.rob = pathFinderRobot();
     handles.rob = drawMap(handles.rob);
 
