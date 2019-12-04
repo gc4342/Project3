@@ -1,49 +1,46 @@
 classdef pathFinderRobot
     properties
-        arduino1; % arduino variable
-        servo1;         % For joint 1
-        servo2;         % For Joint 2
-        servo3;         % For joint 3
+        % arduino variable
+        arduino1;
+        
+        % declare servos
+        servo1;
+        servo2;
+        servo3;
         
         % variables
-        t1ZeroPosition;         % Initial position of the servo1
-        t2ZeroPosition;         % Initial position of the servo2
-        t3Up;                   % Pen up position for joint 3
-        t3Down;                 % Pen down position for joint 3
-        t1StartDrawingPos;      % Joint position for joint 1, where it start drawing
+        t1ZeroPosition;
+        t2ZeroPosition;
+        t3Up;
+        t3Down;
+        t1StartDrawingPos;
         algorithm;
         algorithm_choice;
         interpolation_method;
         mazefilename;
         pathfilename;
         
-        workFlag = 1;   % Flag to track the status of the game
+        workFlag = 1;
         checkFlag = 1;
         
-        start;      %Variable for start position
-        goal;       %Variable for goal position
+        start;
+        goal;
         
         %box variables
-        box1Center;     %Coordinates of center of box1
-        box2Center;     %Coordinates of center of box2
-        box3Center;     %Coordinates of center of box3
-        box4Center;     %Coordinates of center of box4
-        centerBox;      %Coordinates of center of middle box 
+        box1Center;
+        box2Center;
+        box3Center;
+        box4Center;
+        centerBox;
+        
     end
     
     methods
-        %******************************************************************
-        %   Function: drawRobot
-        %   Input   : class object
-        %   Output  : Returns the changed object
-        %
-        %   Working : This is a contructor function of the class pathFinderRobot
-        %             it intitializes all the variables and puts the robot
-        %             ready to draw the map and begin maze solving
-        %******************************************************************
+        %constructor
         function rob = pathFinderRobot()
             
             rob.arduino1 = arduino('COM5','Uno','Libraries','Servo');
+            
             rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
             rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
             rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6);
@@ -60,21 +57,9 @@ classdef pathFinderRobot
             rob = PenUp(rob);
             rob.mazefilename = 'shapesinfo.txt';
             rob.start = [3, 10];
-            rob.goal = [12, 3];
+            rob.goal = [12,3];
         end
         
-        %******************************************************************
-        %   Function: drawMap
-        %   Input   : class object
-        %   Output  : Returns the changed object
-        %
-        %   Working : This loads the joint angles file obtained from the
-        %             GUI and programs the servos to move the joints as
-        %             given in the file and hence draw the figure given in
-        %             the file.
-        %
-        %******************************************************************
-
         function rob = drawMap(rob)
             data = load('shapesinfo.txt');
             i = 1;
@@ -86,18 +71,17 @@ classdef pathFinderRobot
                     writePosition(rob.servo3, rob.t3Up);
                 end
                 rob = checkPushButton(rob); % call to check if the button is pressed
-                %                 if(rob.workFlag == 0)% || (rob.workFlag == 2))
-                %                     disp('=========  Game Over  ============');
-                %                     pause(20)
-                %                     break;
-                %                 end
+%                 if(rob.workFlag == 0)% || (rob.workFlag == 2))
+%                     disp('=========  Game Over  ============');
+%                     pause(20)
+%                     break;
+%                 end
                 
                 q1 = data(i,1); % joint angle one
                 q2 = data(i,2); % joint angle two
-                % relative joint angle for servos 1 & 2
-                pos1 = abs(rob.t1StartDrawingPos-q1);
-                pos2 = abs(rob.t2ZeroPosition-q2);      
-                % write position to servos 1 & 2 to move to the specified angle
+                
+                pos1 = abs(rob.t1StartDrawingPos-q1); % how much theta we move
+                pos2 = abs(rob.t2ZeroPosition-q2);
                 writePosition(rob.servo1, pos1);
                 writePosition(rob.servo2, pos2);
                 current_pos1 = readPosition(rob.servo1);
@@ -164,8 +148,8 @@ classdef pathFinderRobot
                     pause(2);
                 case 'mtraj-lspb'
                     disp('Mtraj_lspb')
-                    for i=1:1:m-1  %1 to 6
-                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@Akshata, why is this 1 to 6??
+                    for i=1:1:m-1  %1 to 6 
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@Akshata, why is this 1 to 6??
                         if i==1
                             mtraj_path_points_lspb(1:10,1:2) = mtraj(@lspb,[path_points(i,1) ...
                                 path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
@@ -184,18 +168,6 @@ classdef pathFinderRobot
             end
         end
         
-        %******************************************************************
-        %   Function: checkPushButton
-        %   Input   : class object
-        %   Output  : Returns the changed object
-        %
-        %   Working : polling on the push buttons, if the button is pressed,
-        %             and is true, then the processing is given to UserGuess
-        %             function, the return value is checked, if the number
-        %             of guesses per player has not exceeded maximum chances
-        %             and proper action is taken accordingly here.
-        %******************************************************************
-        
         function rob = checkPushButton(rob, new_x, new_y, blk_x, blk_y)
             %check if any button is pressed
             pinValue1 = readDigitalPin(rob.arduino1, 'D4'); % pins connected to arduino
@@ -209,30 +181,17 @@ classdef pathFinderRobot
             if(pinValue2 == 1)
                 disp('==== Quitting maze solving and returning to start ====');
                 rob = drawPath(rob, fix(new_x), fix(new_y), 0, 0, 1);
-                rob.workFlag = 0;
+                rob.workFlag = 0;  
             end
         end
         
-        %******************************************************************
-        %   Function: recordMovements
-        %   Input   : class object, joint angle 1, joint angle 2
-        %   Output  : Returns the changed object
-        %
-        %   Working : writes the joint angle required to move the servo to
-        %             move the pen as per the key press position for drawing
-        %             on the sheet simultaneously with GUI
-        %******************************************************************
-        
         function rob = recordMovement(rob, q1, q2, q3)
-            % relative joint angle for servos 1 -> 3
-            pos1 = abs(rob.t1StartDrawingPos-q1); 
+            pos1 = abs(rob.t1StartDrawingPos-q1);
             pos2 = abs(rob.t2ZeroPosition-q2);
             pos3 = abs(rob.t3Down - q3);
-            % write position to servos to move to the specified angle
             writePosition(rob.servo1, pos1);
             writePosition(rob.servo2, pos2);
             writePosition(rob.servo3, pos3);
-            % PenDown to be down at the first time this function is called
             if(rob.checkFlag == 1)
                 pause(5);
                 writePosition(rob.servo3, rob.t3Down);
@@ -263,45 +222,18 @@ classdef pathFinderRobot
             end %Switch case
         end % mazesolver
         
-        %******************************************************************
-        %   Function: PenUp
-        %   Input   : class object
-        %   Output  : Returns the changed object
-        %
-        %   Working : writes the joint angle required to move the servo to
-        %             move the pen in up right position.
-        %
-        %******************************************************************
-
         function rob = PenUp(rob)
             % Theta3 to move pen tip upwards
             writePosition(rob.servo3, rob.t3Up); %penUp position
         end
         
-        %******************************************************************
-        %   Function: PenDown
-        %   Input   : class object
-        %   Output  : Returns the changed object
-        %
-        %   Working : writes the joint angle required to move the servo to
-        %             move the pen in ready position for drawing on the
-        %             sheet(Perpendicular to the paper)
-        %
-        %******************************************************************
-
         function rob = PenDown(rob)
             % Theta3 to move pen tip downwards
             writePosition(rob.servo3, rob.t3Down);
         end
         
-        %******************************************************************
-        %   Function: DisconnectRobot
-        %   Input   : class object
-        %   Output  : void
-        %
-        %   Working : Disconnects the robot and clears all the objects.
-
         function rob = disconnectRobot(rob)
+            %Clear workspace
             clear all;
             clc;
         end
