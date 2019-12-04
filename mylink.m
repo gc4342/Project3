@@ -593,6 +593,7 @@ function mazeSolver_Callback(hObject, eventdata, handles)
     import pkg.*
     handles.rob = pathFinderRobot();
     handles.algo;
+    handles.intp_method;
     handles.rob = mazeSolver(handles.rob, handles.algo,handles.intp_method);
     
         handles.theta1 = -47.3/180;
