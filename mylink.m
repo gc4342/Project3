@@ -600,6 +600,8 @@ function mazeSolver_Callback(hObject, eventdata, handles)
    % Remove these comments if you have the hardware: NO HARDWARE
         handles.theta1 = -47.3/180;
         handles.theta2 = 50.108/180;
+%         handles.theta1 = (-45/180)*pi;
+%         handles.theta2 = (47/180)*pi;
         handles.theta3 = 0;
         handles.theta4 = 0;
         
@@ -608,9 +610,10 @@ function mazeSolver_Callback(hObject, eventdata, handles)
         handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         
      i = 1;   
+     tic;
      while true
+        try
         data = load('mtrajPoints.txt');
-        disp(i);
         handles.rob = checkPushButton(handles.rob, data(i,1), data(i,2), data(i+2,1), data(i+2,2));
         if(handles.rob.workFlag == 0)
             i = 1
@@ -627,10 +630,14 @@ function mazeSolver_Callback(hObject, eventdata, handles)
         handles.theta3 = 0;
         handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         i = i+1;
+        catch
+            disp('Elapsed Time = ');
+            toc;
+            break;
+        end
      end
 
-% Update handles structure
-guidata(hObject, handles);
+
 % --------------------------------------------------------------------
 function GoalPosition_Callback(hObject, eventdata, handles)
 % hObject    handle to GoalPosition (see GCBO)
@@ -709,6 +716,9 @@ function To_Box1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.rob.goal = handles.box1;
+
+% handles.theta1 = -47.3/180;
+% handles.theta2 = 50.108/180;
 disp('Going to box1'); 
 
 % Update handles structure
