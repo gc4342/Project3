@@ -252,14 +252,18 @@ classdef pathFinderRobot
             switch rob.algorithm
                 case 'D_Star'
                     disp('Solving using D Star');
+                  rob.algorithm = 1;
+
                     rob = drawPath(rob, rob.start,rob.goal, 0, 0, 0);
                     
                 case 'PRM'
                     disp('Solving using PRM');
+                      rob.algorithm = 2;
                     rob = drawPath(rob, rob.start,rob.goal, 0, 0, 0);
                     
                 case 'DXForm'
                     disp('Solving using DXForm');
+                      rob.algorithm = 3;
                     rob = drawPath(rob, rob.start,rob.goal, 0, 0, 0);
             end %Switch case
         end % mazesolver
