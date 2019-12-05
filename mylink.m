@@ -42,8 +42,8 @@ handles.theta4 = 0;
 
 handles.box1 = [3,10]; %top left box center point
 handles.box2 = [12,10]; %top right box center point
-handles.box3 = [12,3]; %bottom right box center point
-handles.box4 = [3,3]; %bottom left box center point
+handles.box3 = [3,3]; %bottom right box center point
+handles.box4 = [12,3]; %bottom left box center point
 handles.centerBox = [8,6]; %Center box center point
 
 handles.filename = '';
@@ -629,13 +629,17 @@ function mazeSolver_Callback(hObject, eventdata, handles)
         i = i+1;
      end
 
-
+% Update handles structure
+guidata(hObject, handles);
 % --------------------------------------------------------------------
 function GoalPosition_Callback(hObject, eventdata, handles)
 % hObject    handle to GoalPosition (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 disp('Goal Position');
+
+% Update handles structure
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function From_centerBox_Callback(hObject, eventdata, handles)
@@ -645,6 +649,9 @@ function From_centerBox_Callback(hObject, eventdata, handles)
 handles.rob.start = handles.centerBox;
 disp('Starting from center box'); 
 
+% Update handles structure
+guidata(hObject, handles);
+
 
 % --------------------------------------------------------------------
 function To_CenterBox_Callback(hObject, eventdata, handles)
@@ -653,6 +660,9 @@ function To_CenterBox_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 handles.rob.goal = handles.centerBox;
 disp('Going to center box');
+
+% Update handles structure
+guidata(hObject, handles);
 
 
 % --- Executes on selection change in popupmenu4.
@@ -676,9 +686,9 @@ function popupmenu4_Callback(hObject, eventdata, handles)
         msg = 'Error while choosing option, defaulting to mtraj-tpoly.';
         warning(msg)    
     end
-    %disp(handles.rob.intp_method);
-    guidata(hObject, handles);
-
+ 
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function popupmenu4_CreateFcn(hObject, eventdata, handles)
@@ -701,6 +711,9 @@ function To_Box1_Callback(hObject, eventdata, handles)
 handles.rob.goal = handles.box1;
 disp('Going to box1'); 
 
+% Update handles structure
+guidata(hObject, handles);
+
 
 % --------------------------------------------------------------------
 function To_Box2_Callback(hObject, eventdata, handles)
@@ -710,6 +723,9 @@ function To_Box2_Callback(hObject, eventdata, handles)
 handles.rob.goal = handles.box2;
 disp('Going to box2'); 
 
+% Update handles structure
+guidata(hObject, handles);
+
 % --------------------------------------------------------------------
 function To_Box3_Callback(hObject, eventdata, handles)
 % hObject    handle to To_Box3 (see GCBO)
@@ -717,6 +733,9 @@ function To_Box3_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 handles.rob.goal = handles.box3;
 disp('Going to box3'); 
+
+% Update handles structure
+guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
@@ -727,6 +746,8 @@ function To_Box4_Callback(hObject, eventdata, handles)
 handles.rob.goal = handles.box4;
 disp('Going to box4'); 
 
+% Update handles structure
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function From_Box1_Callback(hObject, eventdata, handles)
@@ -736,6 +757,8 @@ function From_Box1_Callback(hObject, eventdata, handles)
 handles.rob.start = handles.box1;
 disp('Starting from box1');
 
+% Update handles structure
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function From_Box2_Callback(hObject, eventdata, handles)
@@ -745,6 +768,8 @@ function From_Box2_Callback(hObject, eventdata, handles)
 handles.rob.start = handles.box2;
 disp('Starting from box2');
 
+% Update handles structure
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function From_Box3_Callback(hObject, eventdata, handles)
@@ -755,6 +780,8 @@ handles.rob.start = handles.box3;
 disp('Starting from box3');
 
 
+% Update handles structure
+guidata(hObject, handles);
 % --------------------------------------------------------------------
 function From_Box4_Callback(hObject, eventdata, handles)
 % hObject    handle to From_Box4 (see GCBO)
@@ -763,6 +790,8 @@ function From_Box4_Callback(hObject, eventdata, handles)
 handles.rob.start = handles.box4;
 disp('Starting from box4');
 
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes on button press in DrawMap.
 function DrawMap_Callback(hObject, eventdata, handles)
@@ -774,7 +803,8 @@ function DrawMap_Callback(hObject, eventdata, handles)
 %     handles.rob = pathFinderRobot();
     handles.rob = drawMap(handles.rob);
 
-
+% Update handles structure
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function StartingPosition_Callback(hObject, eventdata, handles)

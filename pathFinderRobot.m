@@ -43,7 +43,7 @@ classdef pathFinderRobot
         %******************************************************************
         function rob = pathFinderRobot()
 
-            rob.arduino1 = arduino('COM5','Uno','Libraries','Servo');
+            rob.arduino1 = arduino('COM6','Uno','Libraries','Servo');
             rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
             rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
             rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6);
@@ -61,8 +61,8 @@ classdef pathFinderRobot
             rob = PenUp(rob);
 
             rob.mazefilename = 'shapesinfo.txt';
-            rob.start = [3, 10];
-            rob.goal = [12, 3];
+            rob.start = [];
+            rob.goal = [];
         end
         
         %******************************************************************
@@ -88,6 +88,7 @@ classdef pathFinderRobot
 
                     chngFlag = 1;    % On map - location jump to another box
                     writePosition(rob.servo3, rob.t3Up);
+                    pause(2);
                 end
                 
                 q1 = data(i,1); % joint angle one
@@ -101,10 +102,10 @@ classdef pathFinderRobot
                 writePosition(rob.servo2, pos2);
 
     
-                if (i==1 || chngflag == 1)
+                if (i==1 || chngFlag == 1)
                     pause(0.5);
                     writePosition(rob.servo3, rob.t3Down); % get ready to start drawing
-                    chngflag = 0;
+                    chngFlag = 0;
                 end
                     
                 pause(0.25);
@@ -233,7 +234,7 @@ classdef pathFinderRobot
             writePosition(rob.servo3, pos3);
             % PenDown to be down at the first time this function is called
             if(rob.checkFlag == 1)
-                pause(5);
+                pause(2);
                 writePosition(rob.servo3, rob.t3Down);
                 rob.checkFlag = 0;
             end
