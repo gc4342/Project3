@@ -1,14 +1,18 @@
  %mymap=makemap(10);
-goal = [13,3]
-start = [9,11]
+% goal = [13,3]
+% start = [9,11]
+
+
+start = [3, 10];
+goal = [12,3];
 load mapvariable.mat;
 
 dxform=DXform(mymap);
 dxform.plan(goal);
 dxform.plot();
-dxform.query(start,goal)
-dxform.plot();
-b = dxform.query(start, 'animate')
+b = dxform.query(start,goal)
+dxform.plot(b);
+%b = dxform.query(start, 'animate')
 [m,n]=size(b);
 for i=1:1:m-1
     if i==1

@@ -14,11 +14,11 @@ classdef pathFinderRobot
         t3Up;
         t3Down;
         t1StartDrawingPos;
-        algorithm
-        algorithm_choice;
-        interpolation_method;
+        algorithm;
+        intp_method;
         mazefilename;
         pathfilename;
+        
         
         workFlag = 1;
         checkFlag = 1;
@@ -39,12 +39,12 @@ classdef pathFinderRobot
         %constructor
         function rob = pathFinderRobot()
             
-            rob.arduino1 = arduino('COM6','Uno','Libraries','Servo');
-            
-            rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
-            rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
-            rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6);
-            
+% %             rob.arduino1 = arduino('COM6','Uno','Libraries','Servo');
+% %             
+% %             rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
+% %             rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
+% %             rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6);
+% %             
             % Initial servo positions
             rob.t1ZeroPosition = 0.13;       % theta1 actual zero position
             rob.t2ZeroPosition = 0.7;          % theta2 actual zero position
@@ -65,7 +65,7 @@ classdef pathFinderRobot
             
             rob.workFlag = 1;
             rob.checkFlag = 1;
-            rob = PenUp(rob);
+% %             rob = PenUp(rob);
             rob.mazefilename = 'shapesinfo.txt';
             rob.start = [3, 10];
             rob.goal = [12,3];
@@ -87,15 +87,15 @@ classdef pathFinderRobot
                 rob.start = [start_x, start_y];
             end
             
-            rob.algorithm;       
-            switch rob.algorithm
-               case 'D_Star'
+            algo = rob.algorithm;      
+            switch algo
+               case 1
                    disp('Dstar algorithm')
                    ds=Dstar(mymap);
-               case 'PRM'
+               case 2
                    disp('PRM algorithm')
                    ds=PRM(mymap);
-               case 'DXForm'
+               case 3
                    disp('DxForm algorithm')
                    ds=DXform(mymap);
                otherwise
@@ -103,8 +103,8 @@ classdef pathFinderRobot
             end
             ds.plan(rob.goal);
             ds.plot();
-            ds.query(rob.start, 'animate');
-            path_points = ds.query(rob.start, 'animate');
+            path_points = ds.query(rob.start,rob.goal)
+            ds.plot(path_points);
             [m,n]=size(path_points);
             rob.intp_method;
             switch rob.intp_method
@@ -120,9 +120,9 @@ classdef pathFinderRobot
                        end
                    end
                    dlmwrite('mtrajPoints.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
-                   rob.pathfilename = 'mtrajPoints.txt.txt';
+                   rob.pathfilename = 'mtrajPoints.txt';
                    hold on;
-                   plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'*w');
+                   plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'c');
                    pause(2);
                case 'mtraj-lspb'
                    disp('Mtraj_lspb')
@@ -135,10 +135,10 @@ classdef pathFinderRobot
                           path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);                
                        end
                    end
-                   dlmwrite('mtrajPoints.txt.txt',mtraj_path_points_lspb,'delimiter','\t','newline','pc');
-                   rob.pathfilename = 'mtrajPoints.txt.txt';
+                   dlmwrite('mtrajPoints.txt',mtraj_path_points_lspb,'delimiter','\t','newline','pc');
+                   rob.pathfilename = 'mtrajPoints.txt';
                    hold on;
-                   plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
+                   plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'b--o');
                    pause(2);                  
                otherwise
                     disp('Not a valid option for interpolation method')
