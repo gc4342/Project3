@@ -42,8 +42,8 @@ handles.theta4 = 0;
 
 handles.box1 = [3,10]; %top left box center point
 handles.box2 = [12,10]; %top right box center point
-handles.box3 = [12,3]; %bottom right box center point
-handles.box4 = [3,3]; %bottom left box center point
+handles.box3 = [3,3]; %bottom right box center point
+handles.box4 = [12,3]; %bottom left box center point
 handles.centerBox = [8,6]; %Center box center point
 
 handles.filename = '';
@@ -669,7 +669,7 @@ function popupmenu4_Callback(hObject, eventdata, handles)
         disp('Using mtraj-tpoly');
  
     else
-        handles.intp_method = 'mtraj-tpoly';
+        handles.rob.intp_method = 'defaultNoInterpolation';
         msg = 'Error while choosing option, defaulting to mtraj-tpoly.';
         warning(msg)    
     end
@@ -770,4 +770,10 @@ function DrawMap_Callback(hObject, eventdata, handles)
     disp('DrawMap');
     handles.rob = pathFinderRobot();
     handles.rob = drawMap(handles.rob);
+
+% --------------------------------------------------------------------
+function StartingPosition_Callback(hObject, eventdata, handles)
+% hObject    handle to StartingPosition (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 

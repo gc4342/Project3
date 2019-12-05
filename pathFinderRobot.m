@@ -68,8 +68,8 @@ classdef pathFinderRobot
             rob = PenUp(rob);
             rob.mazefilename = 'shapesinfo.txt';
             rob.start = [3, 10];
-            rob.goal = [12,3];
-        end
+            rob.goal = [12, 3];
+
         
         function rob = drawMap(rob)
             data = load('shapesinfo.txt');
@@ -176,7 +176,7 @@ classdef pathFinderRobot
                    plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
                    pause(2);                  
                otherwise
-                    disp('Not a valid option for interpolation method')
+                    disp('defaulting to no interpolation')
             end
             
 
