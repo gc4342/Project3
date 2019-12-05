@@ -16,6 +16,7 @@ classdef pathFinderRobot
         mazefilename;
         pathfilename;
         
+
         workFlag = 1;   % Flag to track the status of the game
         checkFlag = 1;
         
@@ -41,6 +42,7 @@ classdef pathFinderRobot
         %             ready to draw the map and begin maze solving
         %******************************************************************
         function rob = pathFinderRobot()
+
  %{  
          NO HARDWARE
             rob.arduino1 = arduino('COM5','Uno','Libraries','Servo');
@@ -57,7 +59,9 @@ classdef pathFinderRobot
             
             rob.workFlag = 1;
             rob.checkFlag = 1;
+
 %     NO HARDWARE        rob = PenUp(rob);
+
             rob.mazefilename = 'shapesinfo.txt';
             rob.start = [3, 10];
             rob.goal = [12, 3];
@@ -124,62 +128,61 @@ classdef pathFinderRobot
                 rob.goal = rob.start;
                 rob.start = [start_x, start_y];
             end
-            
-            rob.algorithm;
-            switch rob.algorithm
-                case 'D_Star'
-                    disp('Dstar algorithm')
-                    ds=Dstar(mymap);
-                case 'PRM'
-                    disp('PRM algorithm')
-                    ds=PRM(mymap);
-                case 'DXForm'
-                    disp('DxForm algorithm')
-                    ds=DXform(mymap);
-                otherwise
+ 
+            algo = rob.algorithm;      
+            switch algo
+               case 1
+                   disp('Dstar algorithm')
+                   ds=Dstar(mymap);
+               case 2
+                   disp('PRM algorithm')
+                   ds=PRM(mymap);
+               case 3
+                   disp('DxForm algorithm')
+                   ds=DXform(mymap);
+               otherwise
                     disp('Not a valid option for algorithm')
             end
             ds.plan(rob.goal);
             ds.plot();
-            ds.query(rob.start, 'animate');
-            path_points = ds.query(rob.start, 'animate');
+            path_points = ds.query(rob.start,rob.goal)
+            ds.plot(path_points);
             [m,n]=size(path_points);
             rob.intp_method;
             switch rob.intp_method
-                case 'mtraj-tpoly'
-                    disp('Mtraj_tpoly')
+               case 'mtraj-tpoly'
+                   disp('Mtraj_tpoly')
+                   for i=1:1:m-1  %1 to 6
+                       if i==1
+                          mtraj_path_points_tpoly(1:10,1:2) = mtraj(@tpoly,[path_points(i,1) ...
+                          path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
+                       else
+                          mtraj_path_points_tpoly((i*10)-9:10*i,1:2) = mtraj(@tpoly,[path_points(i,1) ...
+                          path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);                
+                       end
+                   end
+                   dlmwrite('mtrajPoints.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
+                   rob.pathfilename = 'mtrajPoints.txt';
+                   hold on;
+                   plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'c');
+                   pause(2);
+               case 'mtraj-lspb'
+                   disp('Mtraj_lspb')
                     for i=1:1:m-1  %1 to 6
-                        if i==1
-                            mtraj_path_points_tpoly(1:10,1:2) = mtraj(@tpoly,[path_points(i,1) ...
-                                path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
-                        else
-                            mtraj_path_points_tpoly((i*10)-9:10*i,1:2) = mtraj(@tpoly,[path_points(i,1) ...
-                                path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
-                        end
-                    end
-                    dlmwrite('mtrajPoints.txt',mtraj_path_points_tpoly,'delimiter','\t','newline','pc');
-                    rob.pathfilename = 'mtrajPoints.txt.txt';
-                    hold on;
-                    plot(mtraj_path_points_tpoly(:,1),mtraj_path_points_tpoly(:,2),'*w');
-                    pause(2);
-                case 'mtraj-lspb'
-                    disp('Mtraj_lspb')
-                    for i=1:1:m-1  %1 to 6
-                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@Akshata, why is this 1 to 6??
-                        if i==1
-                            mtraj_path_points_lspb(1:10,1:2) = mtraj(@lspb,[path_points(i,1) ...
-                                path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
-                        else
-                            mtraj_path_points_lspb((i*10)-9:10*i,1:2) = mtraj(@lspb,[path_points(i,1) ...
-                                path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
-                        end
-                    end
-                    dlmwrite('mtrajPoints.txt.txt',mtraj_path_points_lspb,'delimiter','\t','newline','pc');
-                    rob.pathfilename = 'mtrajPoints.txt.txt';
-                    hold on;
-                    plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'*w');
-                    pause(2);
-                otherwise
+                       if i==1
+                          mtraj_path_points_lspb(1:10,1:2) = mtraj(@lspb,[path_points(i,1) ...
+                          path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);
+                       else
+                          mtraj_path_points_lspb((i*10)-9:10*i,1:2) = mtraj(@lspb,[path_points(i,1) ...
+                          path_points(i,2)], [path_points(i+1,1) path_points(i+1,2)],10);                
+                       end
+                   end
+                   dlmwrite('mtrajPoints.txt',mtraj_path_points_lspb,'delimiter','\t','newline','pc');
+                   rob.pathfilename = 'mtrajPoints.txt';
+                   hold on;
+                   plot(mtraj_path_points_lspb(:,1),mtraj_path_points_lspb(:,2),'b--o');
+                   pause(2);                  
+               otherwise
                     disp('Not a valid option for interpolation method')
             end
         end
