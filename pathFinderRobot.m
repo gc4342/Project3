@@ -43,8 +43,6 @@ classdef pathFinderRobot
         %******************************************************************
         function rob = pathFinderRobot()
 
-  
-         %NO HARDWARE
             rob.arduino1 = arduino('COM5','Uno','Libraries','Servo');
             rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
             rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
@@ -60,7 +58,7 @@ classdef pathFinderRobot
             rob.workFlag = 1;
             rob.checkFlag = 1;
 
-%     NO HARDWARE        rob = PenUp(rob);
+            rob = PenUp(rob);
 
             rob.mazefilename = 'shapesinfo.txt';
             rob.start = [3, 10];
@@ -87,29 +85,24 @@ classdef pathFinderRobot
             while true % if file is empty > penup
                 if (data(i, 1) == 61.000000)
                     i = i+1;
+                    chngFlag = 1;    % On map - location jump to another box
                     writePosition(rob.servo3, rob.t3Up);
                 end
-                rob = checkPushButton(rob); % call to check if the button is pressed
-                %                 if(rob.workFlag == 0)% || (rob.workFlag == 2))
-                %                     disp('=========  Game Over  ============');
-                %                     pause(20)
-                %                     break;
-                %                 end
                 
                 q1 = data(i,1); % joint angle one
                 q2 = data(i,2); % joint angle two
+                
                 % relative joint angle for servos 1 & 2
                 pos1 = abs(rob.t1StartDrawingPos-q1);
                 pos2 = abs(rob.t2ZeroPosition-q2);      
                 % write position to servos 1 & 2 to move to the specified angle
                 writePosition(rob.servo1, pos1);
                 writePosition(rob.servo2, pos2);
-                current_pos1 = readPosition(rob.servo1);
-                current_pos1 = current_pos1*180;
-                current_pos2 = readPosition(rob.servo2);
-                current_pos2 = current_pos2*180;
-                if (i==1 || i-1 == 61.000000)
+                
+                if (i==1 || chngFlag == 1)
+                    pause(0.5);
                     writePosition(rob.servo3, rob.t3Down); % get ready to start drawing
+                    chngFlag = 0;
                 end
                 pause(0.25);
                 i = i+1;
