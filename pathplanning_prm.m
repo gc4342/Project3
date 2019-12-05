@@ -1,13 +1,14 @@
 %%mymap=makemap(10);
-mymap = load ('mymap_variable')
-goal=[8,9]
-start=[5,5]
+mymap = load ('mymap')
+start = [3, 10];
+goal = [12,3];
+mymap = mymap.mymap;
 prm=PRM(mymap);
 prm.plan(goal);
 prm.plot();
-prm.query(start,goal)
-prm.plot();
-b = prm.query(start, 'animate')
+b = prm.query(start,goal)
+prm.plot(b);
+% % b = prm.query(goal,'animate')
 [m,n]=size(b);
 for i=1:1:m-1
     if i==1

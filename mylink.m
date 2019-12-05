@@ -2,11 +2,11 @@ function varargout = mylink(varargin)
 % MYLINK MATLAB code for mylink.fig
 %      MYLINK, by itself, creates a new MYLINK or raises the existing
 %      singleton*.
-%      H = MYLINK returns the handle to a new MYLINK or the handle to
+%      H = MYLINK returns the  handle to a new MYLINK or the handle to
 %      the existing singleton*.
 %      MYLINK('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in MYLINK.M with the given input arguments.
-% Last Modified by GUIDE v2.5 03-Dec-2019 08:53:51
+% Last Modified by GUIDE v2.5 04-Dec-2019 22:20:48
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -178,6 +178,7 @@ set(handles.edit4, 'String', T.t(1));
 set(handles.edit5, 'String', T.t(2));
 set(handles.edit6, 'String', T.t(3));
 
+handles.rob = pathFinderRobot();
 % Update handles structure
 guidata(hObject, handles);
 
@@ -416,7 +417,7 @@ function checkbox1_Callback(hObject, eventdata, handles)
 T = handles.robot.fkine ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 handles.robot.plot ([handles.theta1, handles.theta2, handles.theta3, handles.theta4]);
 
-handles.rob = pathFinderRobot();      % initiate the object of class drawRobot
+% handles.rob = pathFinderRobot();      % initiate the object of class drawRobot
 valbutton = get(hObject,'Value')  % fetch the value of the checkbox
 handles.theta3 = (45/180)*pi;
 %if the button is pressed, open the files,to void rewriting of the file, when
@@ -468,26 +469,27 @@ while(valbutton)
                 pause(1);
                 if(shift == 1)
                     disp('box 2');
-                    handles.theta1 = (-49/180)*pi; %box 2
-                    handles.theta2 = (29.8/180)*pi;
+                    handles.theta1 = (-38/180)*pi; %box 2
+                    handles.theta2 = (17/180)*pi;
                     shift = shift+1;
                     
                 elseif(shift == 2)
                     disp('box 3');
-                    handles.theta1 = (-35/180)*pi; %box 3
+                    handles.theta1 = (-34/180)*pi; %box 3
                     handles.theta2 = (66/180)*pi;
                     shift = shift+1;
                     
                 elseif(shift == 3)
                     disp('Middle Box');
-                    handles.theta1 = (-77/180)*pi; %Middle Box
-                    handles.theta2 = (51/180)*pi;
+                    handles.theta1 = (-37/180)*pi; %Middle Box
+                    handles.theta2 = (41.8/180)*pi;
+                    
                     shift = shift+1;
                     
                 elseif(shift == 4)
                     disp('box 4');
-                    handles.theta1 = (-39/180)*pi; %box 4
-                    handles.theta2 = (41.8/180)*pi;
+                    handles.theta1 = (-75/180)*pi; %Box 4
+                    handles.theta2 = (52/180)*pi;
                     shift = shift+1;
                 end
                 
@@ -557,20 +559,20 @@ function popupmenu1_Callback(hObject, eventdata, handles)
     algorithm_method = contents(get(hObject, 'Value'));
     
     if(strcmp(algorithm_method, 'D Star'))
-        handles.algo = 'D_Star';
+        handles.rob.algorithm = 'D_Star';
         
     elseif(strcmp(algorithm_method, 'Probabilistic Road Map'))
-        handles.algo = 'PRM';
+        handles.rob.algorithm = 'PRM';
         
     elseif(strcmp(algorithm_method, 'Distance Transform'))
-        handles.algo = 'DXForm';
+        handles.rob.algorithm = 'DXForm';
         
     else
-        handles.algo = 'D Star';
+        handles.rob.algorithm = 'D Star';
         msg = 'Error while choosing option, defaulting to D Star.';
         warning(msg)    
     end
-    disp(handles.algo);
+    %disp(handles.rob.algorithm);
     guidata(hObject, handles);
     
 % --- Executes during object creation, after setting all properties.
@@ -591,10 +593,11 @@ function mazeSolver_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     import pkg.*
-    handles.rob = pathFinderRobot();
-    handles.algo;
-    handles.rob = mazeSolver(handles.rob, handles.algo,handles.intp_method);
-    
+    handles.rob.algorithm
+    handles.rob.intp_method
+    handles.rob = mazeSolver(handles.rob);
+ 
+   % Remove these comments if you have the hardware: NO HARDWARE
         handles.theta1 = -47.3/180;
         handles.theta2 = 50.108/180;
         handles.theta3 = 0;
@@ -661,19 +664,19 @@ function popupmenu4_Callback(hObject, eventdata, handles)
     intp_method = contents(get(hObject, 'Value'));
     
     if(strcmp(intp_method, 'mtraj-lspb'))
-        handles.intp_method = 'mtraj-lspb';
-        disp('Using mtraj-lspb');
+        handles.rob.intp_method = 'mtraj-lspb';
+        %disp('Using mtraj-lspb');
         
     elseif(strcmp(intp_method, 'mtraj-tpoly'))
-        handles.intp_method = 'mtraj-tpoly';
-        disp('Using mtraj-tpoly');
+        handles.rob.intp_method = 'mtraj-tpoly';
+        %disp('Using mtraj-tpoly');
  
     else
-        handles.intp_method = 'mtraj-tpoly';
+        handles.rob.intp_method = 'mtratpoly';
         msg = 'Error while choosing option, defaulting to mtraj-tpoly.';
         warning(msg)    
     end
-    disp(handles.intp_method);
+    %disp(handles.rob.intp_method);
     guidata(hObject, handles);
 
 
@@ -759,3 +762,22 @@ function From_Box4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 handles.rob.start = handles.box4;
 disp('Starting from box4');
+
+
+% --- Executes on button press in DrawMap.
+function DrawMap_Callback(hObject, eventdata, handles)
+% hObject    handle to DrawMap (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    import pkg.*
+    disp('DrawMap');
+%     handles.rob = pathFinderRobot();
+    handles.rob = drawMap(handles.rob);
+
+
+
+% --------------------------------------------------------------------
+function StartingPosition_Callback(hObject, eventdata, handles)
+% hObject    handle to StartingPosition (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
