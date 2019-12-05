@@ -83,18 +83,13 @@ classdef pathFinderRobot
             data = load('shapesinfo.txt');
             i = 1;
             writePosition(rob.servo3, rob.t3Up);
-            
+
             while true % if file is empty > penup
                 if (data(i, 1) == 61.000000)
                     i = i+1;
+                    chngflag = 1;     % new box map position change flag
                     writePosition(rob.servo3, rob.t3Up);
                 end
-                rob = checkPushButton(rob); % call to check if the button is pressed
-                %                 if(rob.workFlag == 0)% || (rob.workFlag == 2))
-                %                     disp('=========  Game Over  ============');
-                %                     pause(20)
-                %                     break;
-                %                 end
                 
                 q1 = data(i,1); % joint angle one
                 q2 = data(i,2); % joint angle two
@@ -104,13 +99,13 @@ classdef pathFinderRobot
                 % write position to servos 1 & 2 to move to the specified angle
                 writePosition(rob.servo1, pos1);
                 writePosition(rob.servo2, pos2);
-                current_pos1 = readPosition(rob.servo1);
-                current_pos1 = current_pos1*180;
-                current_pos2 = readPosition(rob.servo2);
-                current_pos2 = current_pos2*180;
-                if (i==1 || i-1 == 61.000000)
+    
+                if (i==1 || chngflag == 1)
+                    pause(0.5);
                     writePosition(rob.servo3, rob.t3Down); % get ready to start drawing
+                    chngflag = 0;
                 end
+                    
                 pause(0.25);
                 i = i+1;
             end
