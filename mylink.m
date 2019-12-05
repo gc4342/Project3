@@ -2,7 +2,7 @@ function varargout = mylink(varargin)
 % MYLINK MATLAB code for mylink.fig
 %      MYLINK, by itself, creates a new MYLINK or raises the existing
 %      singleton*.
-%      H = MYLINK returns the handle to a new MYLINK or the handle to
+%      H = MYLINK returns the  handle to a new MYLINK or the handle to
 %      the existing singleton*.
 %      MYLINK('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in MYLINK.M with the given input arguments.
@@ -475,20 +475,21 @@ while(valbutton)
                     
                 elseif(shift == 2)
                     disp('box 3');
-                    handles.theta1 = (-35/180)*pi; %box 3
+                    handles.theta1 = (-34/180)*pi; %box 3
                     handles.theta2 = (66/180)*pi;
                     shift = shift+1;
                     
                 elseif(shift == 3)
                     disp('Middle Box');
-                    handles.theta1 = (-77/180)*pi; %Middle Box
-                    handles.theta2 = (51/180)*pi;
+                    handles.theta1 = (-37/180)*pi; %Middle Box
+                    handles.theta2 = (41.8/180)*pi;
+                    
                     shift = shift+1;
                     
                 elseif(shift == 4)
                     disp('box 4');
-                    handles.theta1 = (-39/180)*pi; %box 4
-                    handles.theta2 = (41.8/180)*pi;
+                    handles.theta1 = (-75/180)*pi; %Box 4
+                    handles.theta2 = (52/180)*pi;
                     shift = shift+1;
                 end
                 
@@ -595,7 +596,7 @@ function mazeSolver_Callback(hObject, eventdata, handles)
     handles.rob.algorithm
     handles.rob.intp_method
     handles.rob = mazeSolver(handles.rob);
-%{ 
+ 
    % Remove these comments if you have the hardware: NO HARDWARE
         handles.theta1 = -47.3/180;
         handles.theta2 = 50.108/180;
@@ -627,7 +628,7 @@ function mazeSolver_Callback(hObject, eventdata, handles)
         handles.rob = recordMovement(handles.rob,handles.theta1/pi,handles.theta2/pi,handles.theta3/pi);
         i = i+1;
      end
-%}
+
 
 % --------------------------------------------------------------------
 function GoalPosition_Callback(hObject, eventdata, handles)

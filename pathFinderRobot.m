@@ -43,13 +43,13 @@ classdef pathFinderRobot
         %******************************************************************
         function rob = pathFinderRobot()
 
- %{  
-         NO HARDWARE
+  
+         %NO HARDWARE
             rob.arduino1 = arduino('COM5','Uno','Libraries','Servo');
             rob.servo1 = servo(rob.arduino1,'D9','MaxPulseDuration',2240e-6,'MinPulseDuration',575e-6);
             rob.servo2 = servo(rob.arduino1,'D10','MaxPulseDuration',2290e-6,'MinPulseDuration',575e-6);
             rob.servo3 = servo(rob.arduino1,'D11','MaxPulseDuration',2200e-6,'MinPulseDuration',700e-6);
-   %}         
+         
             % Initial servo positions
             rob.t1ZeroPosition = 0.13;       % theta1 actual zero position
             rob.t2ZeroPosition = 0.7;        % theta2 actual zero position
