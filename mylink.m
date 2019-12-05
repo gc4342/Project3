@@ -469,8 +469,8 @@ while(valbutton)
                 pause(1);
                 if(shift == 1)
                     disp('box 2');
-                    handles.theta1 = (-49/180)*pi; %box 2
-                    handles.theta2 = (29.8/180)*pi;
+                    handles.theta1 = (-38/180)*pi; %box 2
+                    handles.theta2 = (17/180)*pi;
                     shift = shift+1;
                     
                 elseif(shift == 2)
