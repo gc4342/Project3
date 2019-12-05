@@ -682,7 +682,7 @@ function popupmenu4_Callback(hObject, eventdata, handles)
         %disp('Using mtraj-tpoly');
  
     else
-        handles.rob.intp_method = 'mtratpoly';
+        handles.rob.intp_method = 'No interpolation';
         msg = 'Error while choosing option, defaulting to mtraj-tpoly.';
         warning(msg)    
     end
